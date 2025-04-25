@@ -1,0 +1,2134 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTC SERVİS KAYIT SİSTEMİ</title>
+    <style>
+        /* --- CSS Variables --- */
+        :root {
+            --primary-color: #27ae60; /* Slightly different green */
+            --primary-dark: #229954;
+            --secondary-color: #e74c3c; /* Red */
+            --secondary-dark: #c0392b;
+            --info-color: #3498db;    /* Blue */
+            --info-dark: #2980b9;
+            --warning-color: #f39c12; /* Yellow */
+            --warning-dark: #d35400;
+            --dark-bg: #2c3e50;      /* Dark blue-grey for nav/sidebar */
+            --medium-dark-bg: #34495e; /* Slightly lighter dark */
+            --light-bg: #ecf0f1;      /* Light grey for main area background */
+            --content-bg: #ffffff;   /* White for content boxes */
+            --text-color: #34495e;   /* Dark grey for text */
+            --light-text: #f8f9fa;   /* Light text for dark backgrounds */
+            --border-color: #bdc3c7; /* Lighter grey border */
+            --input-border-color: #ced4da;
+            --focus-ring-color: rgba(39, 174, 96, 0.5); /* Green focus ring */
+            --navbar-height: 60px;
+            --sidebar-width: 230px; /* Slightly wider sidebar */
+            --base-padding: 15px;
+            --input-padding: 10px;
+            --button-padding: 10px 18px;
+            --border-radius: 4px; /* Slightly softer radius */
+            --box-shadow: 0 3px 8px rgba(0, 0, 0, 0.07); /* Softer shadow */
+            --box-shadow-light: 0 1px 3px rgba(0, 0, 0, 0.05);
+            --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            --font-size-base: 1rem; /* 16px */
+            --font-size-small: 0.875rem; /* 14px */
+            --font-size-large: 1.125rem; /* 18px */
+        }
+
+        /* --- Base & Body Styles --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--light-bg);
+            display: flex;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        a:hover {
+            color: var(--primary-dark);
+        }
+
+        h1, h2, h3, h4 {
+            margin-bottom: calc(var(--base-padding) * 0.8);
+            color: var(--dark-bg);
+            font-weight: 600;
+        }
+        h1 { font-size: 1.8rem; }
+        h2 { font-size: 1.5rem; border-bottom: 1px solid var(--light-bg); padding-bottom: 8px;}
+        h3 { font-size: 1.25rem; }
+        h4 { font-size: 1.1rem; }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--light-bg);
+            margin: var(--base-padding) 0;
+        }
+
+        small {
+            font-size: var(--font-size-small);
+            color: #7f8c8d; /* Grey */
+        }
+
+
+        /* --- LOGIN & REGISTRATION STYLES --- */
+        .auth-screen {
+            display: none; /* Hide both by default */
+            justify-content: center;
+            align-items: center;
+            width: 100vw;
+            height: 100vh;
+            background-color: var(--medium-dark-bg); /* Use background color from theme */
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 3000;
+        }
+        .auth-screen.active { display: flex; }
+
+        .auth-box {
+            background: var(--content-bg);
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-align: center;
+            width: 90%;
+            max-width: 420px;
+        }
+        .auth-box h2 {
+             margin-bottom: 25px;
+             color: var(--dark-bg);
+             border-bottom: none; /* No border needed here */
+        }
+        .auth-box .form-group {
+             margin-bottom: 20px;
+             text-align: left;
+        }
+        .auth-box label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: var(--font-size-small);
+        }
+        .auth-box input[type="text"],
+        .auth-box input[type="password"],
+        .auth-box input[type="email"] { /* Added email just in case */
+            width: 100%;
+            padding: var(--input-padding);
+            border: 1px solid var(--input-border-color);
+            border-radius: var(--border-radius);
+            font-size: var(--font-size-base);
+        }
+         .auth-box input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px var(--focus-ring-color);
+        }
+        .auth-box button {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            padding: 12px 20px; /* Slightly larger padding */
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: var(--font-size-base);
+            font-weight: 600;
+            transition: background-color 0.2s ease;
+            width: 100%;
+            margin-top: 15px;
+        }
+        .auth-box button:hover { background-color: var(--primary-dark); }
+        .auth-error {
+             color: var(--secondary-color);
+             margin-top: 15px;
+             min-height: 1.2em; /* Ensure space is reserved */
+             font-size: var(--font-size-small);
+        }
+        .auth-switch-link {
+             margin-top: 20px;
+             font-size: var(--font-size-small);
+        }
+        .auth-switch-link a {
+             color: var(--primary-color);
+             font-weight: 600;
+        }
+        .auth-switch-link a:hover { text-decoration: underline; }
+
+        /* --- Main App Container (Initially Hidden) --- */
+        #app-container { display: none; width: 100%; }
+
+        /* --- Navbar --- */
+        .navbar {
+            background-color: var(--dark-bg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 var(--base-padding);
+            width: 100%;
+            height: var(--navbar-height);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .navbar .logo a {
+            color: var(--light-text);
+            font-weight: 700;
+            font-size: var(--font-size-large);
+            padding: 10px 0;
+        }
+        .navbar .logo a:hover { background-color: transparent; } /* Prevent hover effect on logo */
+
+        .nav-links { display: flex; gap: 15px; align-items: center;}
+        #businessNameDisplay {
+            color: var(--light-text);
+            margin-right: 20px;
+            font-size: var(--font-size-small);
+            opacity: 0.8;
+        }
+        .navbar a {
+            color: var(--light-text);
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: var(--border-radius);
+            transition: background-color 0.2s ease;
+            font-size: var(--font-size-small);
+            font-weight: 500;
+        }
+        .navbar a:hover { background-color: var(--medium-dark-bg); }
+
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background-color: var(--dark-bg);
+            padding-top: calc(var(--navbar-height) + var(--base-padding)); /* Navbar height + margin */
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 999;
+            overflow-y: auto;
+             border-right: 1px solid var(--medium-dark-bg); /* Subtle border */
+        }
+        .sidebar a {
+            color: #bdc3c7; /* Lighter grey text */
+            text-decoration: none;
+            padding: 10px 15px;
+            margin: 3px 0;
+            display: block;
+            width: calc(100% - 20px); /* Padding aware width */
+            text-align: left; /* Align text left */
+            border-radius: var(--border-radius);
+            transition: background-color 0.2s ease, color 0.2s ease;
+            cursor: pointer;
+            font-size: var(--font-size-small);
+            font-weight: 500;
+            position: relative; /* For potential icons later */
+        }
+        /* Icon Placeholder */
+        /* .sidebar a::before { content: '• '; opacity: 0.5; margin-right: 5px;} */
+
+        .sidebar a:hover, .sidebar a.active-link {
+            background-color: var(--medium-dark-bg);
+            color: var(--light-text); /* White text on hover/active */
+        }
+        .sidebar a.active-link {
+             background-color: var(--primary-color); /* Green background for active main link */
+             color: var(--light-text);
+        }
+
+        /* Submenu */
+        .submenu {
+            display: none;
+            flex-direction: column;
+            width: calc(100% - 20px);
+            padding-left: 0;
+            transition: max-height 0.3s ease-out;
+            overflow: hidden;
+            max-height: 0;
+            background-color: rgba(0,0,0,0.1); /* Slightly darker submenu bg */
+            border-radius: var(--border-radius);
+            margin: 2px 0 5px 0;
+        }
+        .submenu a {
+            padding: 8px 15px 8px 25px; /* Indent submenu links */
+            font-size: calc(var(--font-size-small) * 0.95);
+            background-color: transparent; /* Inherit background */
+            border: none;
+            margin: 0;
+            width: 100%;
+            border-radius: 0;
+            color: #bdc3c7;
+            font-weight: 400;
+        }
+         /* Style for submenu link when parent is active */
+        .sidebar a.active + .submenu a {
+             color: var(--light-text); /* White text if parent is active */
+        }
+        /* Hover effect for submenu links */
+        .submenu a:hover {
+            background-color: var(--primary-dark); /* Darker green on hover */
+            color: var(--light-text);
+        }
+        /* Highlight submenu link if it's the active content */
+        .submenu a.active-link {
+            background-color: var(--primary-color) !important; /* Ensure override */
+            color: var(--light-text) !important;
+            font-weight: 600;
+        }
+        /* Show submenu */
+        .sidebar a.active + .submenu {
+            display: flex;
+            max-height: 500px; /* Adjust as needed */
+        }
+
+        /* --- Main Content Area --- */
+        .main-content-area {
+            margin-left: var(--sidebar-width);
+            padding: calc(var(--navbar-height) + var(--base-padding)) var(--base-padding) var(--base-padding) var(--base-padding);
+            flex-grow: 1;
+            width: calc(100% - var(--sidebar-width));
+            min-height: 100vh;
+        }
+        .page-content {
+            display: none;
+            background-color: var(--content-bg);
+            padding: calc(var(--base-padding) * 1.5); /* More padding */
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            min-height: calc(100vh - var(--navbar-height) - (2 * var(--base-padding)) ); /* Adjusted min-height */
+        }
+        .page-content.active { display: block; }
+
+        /* --- Forms --- */
+        .form-group { margin-bottom: calc(var(--base-padding) * 1.2); }
+        label {
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: block;
+            font-size: var(--font-size-small);
+            color: var(--text-color);
+        }
+        input[type="text"],
+        input[type="number"],
+        input[type="tel"],
+        input[type="email"],
+        input[type="password"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: var(--input-padding);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--input-border-color);
+            margin-bottom: 5px; /* Reduced margin, spacing controlled by form-group */
+            font-size: var(--font-size-base);
+            line-height: 1.5;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        textarea { resize: vertical; min-height: 90px; }
+        select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 16px 12px; padding-right: 2.5rem; }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px var(--focus-ring-color);
+        }
+
+        /* --- Buttons --- */
+        button, .submit-btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: var(--button-padding);
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: var(--font-size-base);
+            font-weight: 500;
+            transition: background-color 0.2s ease, box-shadow 0.2s ease;
+            margin-right: 8px;
+            line-height: 1.5; /* Ensure consistent height */
+        }
+        button:last-child { margin-right: 0; }
+        button:hover:not(:disabled), .submit-btn:hover:not(:disabled) {
+            background-color: var(--primary-dark);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        button:disabled {
+            background-color: #bdc3c7; /* Grey disabled */
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        button.secondary { background-color: var(--secondary-color); }
+        button.secondary:hover:not(:disabled) { background-color: var(--secondary-dark); }
+        button.info { background-color: var(--info-color); }
+        button.info:hover:not(:disabled) { background-color: var(--info-dark); }
+        button.warning { background-color: var(--warning-color); color: var(--dark-bg); } /* Dark text on yellow */
+        button.warning:hover:not(:disabled) { background-color: var(--warning-dark); }
+        /* Specific buttons for Tx add */
+        #addPaymentButton { background-color: var(--primary-color); } /* Green */
+        #addPaymentButton:hover:not(:disabled) { background-color: var(--primary-dark); }
+        #addDebtButton { background-color: var(--secondary-color); } /* Red */
+        #addDebtButton:hover:not(:disabled) { background-color: var(--secondary-dark); }
+        #makeSupplierPaymentButton { background-color: var(--primary-color); } /* Green */
+        #makeSupplierPaymentButton:hover:not(:disabled) { background-color: var(--primary-dark); }
+        #addSupplierDebtButton { background-color: var(--secondary-color); } /* Red */
+        #addSupplierDebtButton:hover:not(:disabled) { background-color: var(--secondary-dark); }
+
+
+        /* --- Tables --- */
+        .table-wrapper { overflow-x: auto; margin-bottom: var(--base-padding); border: 1px solid var(--light-bg); border-radius: var(--border-radius); }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 0; /* Remove margin as wrapper handles it */
+            font-size: var(--font-size-small); /* Slightly smaller table font */
+        }
+        th, td {
+            padding: 12px var(--base-padding);
+            text-align: left;
+            border-bottom: 1px solid var(--light-bg); /* Lighter horizontal lines */
+            vertical-align: middle;
+        }
+        th {
+            background-color: #f8f9fa; /* Very light grey */
+            font-weight: 600;
+            color: var(--dark-bg);
+        }
+        tr:nth-child(even) { background-color: #fdfdfd; }
+        tr:hover { background-color: #f1f3f5; } /* Subtle hover */
+        td .action-buttons { white-space: nowrap; } /* Prevent button wrapping */
+        .action-buttons button, .action-buttons a {
+            margin-bottom: 0px; /* Remove bottom margin */
+            margin-right: 5px;
+            font-size: calc(var(--font-size-small) * 0.9); /* Smaller buttons in tables */
+            padding: 5px 10px; /* Smaller padding */
+            vertical-align: middle;
+        }
+         .action-buttons button:last-child { margin-right: 0; }
+
+        /* --- Filter Controls --- */
+        .filter-controls {
+            margin-bottom: var(--base-padding);
+            padding: var(--base-padding);
+            background-color: #f8f9fa; /* Light background */
+            border-radius: var(--border-radius);
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--base-padding);
+            align-items: center;
+            border: 1px solid var(--light-bg);
+        }
+        .filter-controls label {
+            margin-bottom: 0;
+            margin-right: 5px;
+            font-weight: 500;
+        }
+        .filter-controls input[type="text"],
+        .filter-controls input[type="date"],
+        .filter-controls select {
+            width: auto; /* Allow shrinking */
+            min-width: 150px;
+            margin-bottom: 0;
+            padding: 8px;
+            font-size: var(--font-size-small);
+            flex-grow: 1; /* Allow growing */
+             max-width: 250px; /* Prevent excessive growth */
+        }
+        .filter-controls button {
+            padding: 8px 15px;
+            font-size: var(--font-size-small);
+            flex-shrink: 0; /* Prevent button shrinking */
+        }
+
+        /* --- Specific Page Sections --- */
+        #content-1-edit .section {
+            background-color: #f9f9f9;
+            padding: var(--base-padding);
+            border-radius: var(--border-radius);
+            margin-bottom: var(--base-padding);
+            border: 1px solid var(--light-bg);
+        }
+        #content-1-edit .section h2 {
+            margin-bottom: var(--base-padding);
+            border-bottom: 1px solid var(--light-bg);
+            padding-bottom: 10px;
+        }
+        #content-1-edit .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+        #content-1-edit .quantity-controls button {
+            padding: 5px 10px;
+            font-size: 1rem;
+            width: 34px; /* Consistent size */
+            height: 34px;
+            line-height: 22px;
+            text-align: center;
+            background-color: var(--medium-dark-bg);
+            flex-shrink: 0;
+        }
+        #content-1-edit .quantity-controls button:hover:not(:disabled) {
+             background-color: var(--dark-bg);
+        }
+        #content-1-edit .quantity-controls input {
+            width: 60px;
+            text-align: center;
+            padding: 5px;
+            border: 1px solid var(--input-border-color);
+            border-radius: var(--border-radius);
+            margin: 0;
+            height: 34px; /* Match button height */
+        }
+        #content-1-edit #saveServiceItemButton { background-color: var(--info-color); }
+        #content-1-edit #saveServiceItemButton:hover:not(:disabled) { background-color: var(--info-dark); }
+
+        #content-1-edit #finalizeServiceButton {
+            margin-top: var(--base-padding);
+            width: 100%;
+            padding: 12px;
+            font-size: var(--font-size-large);
+            font-weight: 600;
+        }
+
+        /* --- Reports --- */
+        #content-report-1 .report-filter {
+            margin-bottom: var(--base-padding);
+            padding: var(--base-padding);
+            background-color: #e9ecef; /* Slightly different filter bg */
+            border-radius: var(--border-radius);
+            display: flex;
+            gap: var(--base-padding);
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        #content-report-1 .report-filter label { margin-bottom: 0; font-weight: 500; }
+        #content-report-1 .report-filter input[type="date"] { width: auto; padding: 8px; font-size: var(--font-size-small); }
+        #content-report-1 .report-summary {
+            margin-top: var(--base-padding);
+            padding: var(--base-padding);
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--light-bg);
+        }
+        #content-report-1 .report-summary p { margin-bottom: 8px; font-size: var(--font-size-base); }
+        #content-report-1 .report-summary hr { margin: 10px 0; border: 0; border-top: 1px solid var(--border-color); }
+        #content-report-1 #reportGrossProfit.loss { color: var(--secondary-color); }
+        #content-report-1 #reportGrossProfit.profit { color: var(--primary-color); }
+        #content-report-1 .report-summary span { font-weight: 600; }
+
+        /* --- Lists (Product Group, Stock) --- */
+        .product-list { margin-top: calc(var(--base-padding) * 1.5); }
+        .product-list h3 { margin-bottom: var(--base-padding); }
+        .product-list .search-box { margin-bottom: var(--base-padding); }
+        .product-list .search-box input {
+             padding: 10px;
+             width: 100%;
+             max-width: 450px;
+             border: 1px solid var(--input-border-color);
+             border-radius: var(--border-radius);
+        }
+        #productStockList-7, #productGroupList-5 {
+            max-height: 450px; /* Increase height */
+            overflow-y: auto;
+            border: 1px solid var(--light-bg);
+            border-radius: var(--border-radius);
+            padding: var(--base-padding);
+            background-color: #fdfdfd;
+        }
+        #productStockList-7 p, #productGroupList-5 p {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed var(--light-bg);
+             display: flex; /* Use flex for better alignment in list view */
+             flex-wrap: wrap;
+             align-items: center;
+             gap: 10px;
+        }
+        #productStockList-7 p:last-child, #productGroupList-5 p:last-child { border-bottom: none; }
+        #productStockList-7 span, #productGroupList-5 span { margin-right: 10px; }
+        #productStockList-7 .stock-info {
+             font-style: normal; /* Remove italic */
+             color: #7f8c8d; /* Muted grey */
+             font-size: var(--font-size-small);
+        }
+        /* Ensure buttons in list view are smaller */
+        #productGroupList-5 .action-buttons button {
+             font-size: calc(var(--font-size-small) * 0.9);
+             padding: 4px 8px;
+        }
+
+        /* --- Modal Styles --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.7); /* Darker overlay */
+        }
+        .modal-content {
+            background-color: var(--content-bg);
+            margin: 8% auto; /* Adjust margin */
+            padding: calc(var(--base-padding) * 1.8);
+            border: none; /* Remove border */
+            width: 85%;
+            max-width: 800px; /* Wider modal */
+            border-radius: var(--border-radius);
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: fadeInModal 0.3s ease-out;
+        }
+        @keyframes fadeInModal {
+             from { opacity: 0; transform: translateY(-20px); }
+             to { opacity: 1; transform: translateY(0); }
+        }
+        .modal-close {
+            color: #95a5a6; /* Grey close button */
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 32px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: color 0.2s ease;
+        }
+        .modal-close:hover, .modal-close:focus { color: var(--dark-bg); text-decoration: none; }
+        .modal-content h2 { margin-bottom: var(--base-padding); }
+        .modal-body {
+             margin-top: var(--base-padding);
+             max-height: 65vh; /* Increase max height */
+             overflow-y: auto;
+             padding-right: 10px; /* Add padding for scrollbar */
+        }
+        .modal-body table { font-size: var(--font-size-small); }
+        .modal-body th, .modal-body td { padding: 10px; } /* More padding in modal tables */
+
+         /* Invoice Specific Styles in Modal */
+         .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--base-padding);
+            padding-bottom: var(--base-padding);
+            border-bottom: 1px solid var(--light-bg);
+            flex-wrap: wrap; /* Wrap on smaller screens */
+         }
+         .invoice-header .left-info, .invoice-header .right-info {
+             min-width: 250px;
+             margin-bottom: 10px; /* Spacing when wrapped */
+         }
+         .invoice-header h3 { margin-top: 0; margin-bottom: 10px; color: var(--primary-color); }
+         .invoice-header p { margin-bottom: 3px; font-size: var(--font-size-small); }
+         .invoice-customer-details {
+             margin-bottom: var(--base-padding);
+             padding: var(--base-padding);
+             background-color: #f9f9f9;
+             border: 1px solid var(--light-bg);
+             border-radius: var(--border-radius);
+         }
+         .invoice-customer-details h4 { margin-bottom: 10px; font-size: var(--font-size-base); }
+         .invoice-customer-details p { margin-bottom: 4px; font-size: var(--font-size-small); }
+         .invoice-items-table th { background-color: var(--medium-dark-bg); color: var(--light-text); }
+         .invoice-totals {
+             margin-top: var(--base-padding);
+             padding-top: var(--base-padding);
+             border-top: 1px solid var(--light-bg);
+             text-align: right;
+         }
+         .invoice-totals p { margin-bottom: 5px; }
+         .invoice-totals .grand-total { font-weight: bold; font-size: var(--font-size-large); color: var(--primary-color); }
+         .invoice-notes { margin-top: var(--base-padding); font-size: var(--font-size-small); font-style: italic; color: #555; }
+
+        /* --- Global Error/Success Message --- */
+        #global-error-message {
+            position: fixed;
+            bottom: 20px; /* Raise slightly */
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--secondary-color); /* Red */
+            color: white;
+            padding: 12px 25px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 4000;
+            display: flex; /* Use flex for alignment */
+            align-items: center;
+            font-size: var(--font-size-base);
+            text-align: center;
+            max-width: 90%;
+            opacity: 0;
+            transition: opacity 0.4s ease, background-color 0.3s ease;
+            pointer-events: none; /* Hide initially */
+        }
+        #global-error-message.show {
+             opacity: 1;
+             pointer-events: auto; /* Allow interaction when shown */
+        }
+        #global-error-message.success { background-color: var(--primary-color); } /* Green */
+         #global-error-message button { /* Close button */
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5em; /* Larger close icon */
+            margin-left: 15px;
+            cursor: pointer;
+            padding: 0 5px;
+            line-height: 1;
+            opacity: 0.8;
+            transition: opacity 0.2s ease;
+         }
+         #global-error-message button:hover { opacity: 1; }
+
+         /* --- Specific Account Balance Colors --- */
+         #currentBalance-9, #supplierBalance-s3,
+         #transactionsTable-9 td:nth-child(3), #transactionsTable-9 td:nth-child(4),
+         #supplierTransactionsTable-s3 td:nth-child(3), #supplierTransactionsTable-s3 td:nth-child(4),
+         #accountSummaryTable-10 td:nth-child(4) {
+             font-weight: 600;
+         }
+         #currentBalance-9[style*="color: red"], /* More specific selector */
+         #supplierBalance-s3[style*="color: red"],
+         #transactionsTable-9 td[style*="color: red"],
+         #supplierTransactionsTable-s3 td[style*="color: red"],
+          #accountSummaryTable-10 td[style*="color: red"] {
+             color: var(--secondary-color) !important; /* Use theme red */
+         }
+         #currentBalance-9[style*="color: green"],
+         #supplierBalance-s3[style*="color: green"],
+         #transactionsTable-9 td[style*="color: green"],
+         #supplierTransactionsTable-s3 td[style*="color: green"],
+          #accountSummaryTable-10 td[style*="color: green"] {
+             color: var(--primary-color) !important; /* Use theme green */
+         }
+          #currentBalance-9[style*="color: black"],
+         #supplierBalance-s3[style*="color: black"],
+         #transactionsTable-9 td[style*="color: black"],
+         #supplierTransactionsTable-s3 td[style*="color: black"],
+          #accountSummaryTable-10 td[style*="color: black"] {
+              color: var(--text-color) !important; /* Use theme text color for zero */
+              font-weight: normal;
+          }
+
+
+         /* --- Simple Responsive Consideration --- */
+         @media (max-width: 768px) {
+            :root { --sidebar-width: 0; /* Hide sidebar on small screens (JS needed for toggle) */ }
+             .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; /* Prepare for toggle */}
+             /* .sidebar.open { transform: translateX(0); } */ /* JS would add .open class */
+             .main-content-area { margin-left: 0; width: 100%; padding: calc(var(--navbar-height) + 10px) 10px 10px 10px; }
+             .navbar .logo a { font-size: 1.1rem; }
+             /* Add a menu toggle button to navbar (HTML needed) */
+             /* .menu-toggle { display: block; } */
+             .filter-controls { gap: 10px; }
+             .filter-controls input, .filter-controls select, .filter-controls button { width: 100%; max-width: none; }
+             .auth-box { padding: 25px; }
+             .modal-content { width: 95%; margin: 5% auto; padding: 20px;}
+             .invoice-header { flex-direction: column; } /* Stack header info */
+         }
+
+    </style>
+</head>
+<body>
+
+    <!-- Login & Registration Screens -->
+    <div id="login-screen" class="auth-screen active">
+        <div class="auth-box">
+            <h2>SERVİS KAYIT SİSTEMİ - Giriş</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="login_business_code">İşletme Kodu:</label>
+                    <input type="text" id="login_business_code" name="business_code" required>
+                </div>
+                <div class="form-group">
+                    <label for="login_password">Şifre:</label>
+                    <input type="password" id="login_password" name="password" required>
+                </div>
+                <button type="submit">Giriş Yap</button>
+                <div id="login-error" class="auth-error"></div>
+                 <div class="auth-switch-link">
+                    Hesabınız yok mu? <a href="#" onclick="showRegistrationScreen(); return false;">Kayıt Olun</a>
+                 </div>
+            </form>
+        </div>
+    </div>
+    <div id="registration-screen" class="auth-screen">
+        <div class="auth-box">
+            <h2>Yeni İşletme Kaydı</h2>
+            <form id="registrationForm">
+                <div class="form-group">
+                    <label for="reg_business_code">İşletme Kodu:</label>
+                    <input type="text" id="reg_business_code" name="reg_business_code" required>
+                     <small>Bu kod giriş yapmak için kullanılacak, benzersiz olmalı.</small>
+                </div>
+                <div class="form-group">
+                    <label for="reg_business_name">İşletme Adı:</label>
+                    <input type="text" id="reg_business_name" name="reg_business_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg_password">Şifre:</label>
+                    <input type="password" id="reg_password" name="reg_password" required>
+                </div>
+                 <div class="form-group">
+                    <label for="reg_confirm_password">Şifre Tekrar:</label>
+                    <input type="password" id="reg_confirm_password" name="reg_confirm_password" required>
+                </div>
+                <button type="submit">Kayıt Ol</button>
+                <div id="registration-error" class="auth-error"></div>
+                <div class="auth-switch-link">
+                    Zaten hesabınız var mı? <a href="#" onclick="showLoginScreen(); return false;">Giriş Yapın</a>
+                 </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Main Application Container -->
+    <div id="app-container">
+        <nav class="navbar">
+             <div class="logo">
+                 <a href="#" onclick="showContent('content-index', this); return false;">SERVİS KAYIT SİSTEMİ</a>
+             </div>
+             <div class="nav-links">
+                 <span id="businessNameDisplay"></span>
+                 <a href="#" onclick="logout()">Çıkış Yap</a>
+             </div>
+         </nav>
+
+         <div class="sidebar">
+            <a href="#" onclick="showContent('content-1-start', this); return false;">YENİ SERVİS KAYDI BAŞLAT</a>
+            <a href="#" onclick="showContent('content-1-edit', this); return false;">AKTİF SERVİSİ DÜZENLE</a>
+            <a href="#" onclick="showContent('content-3', this); return false;">KAYIT ARŞİVİ</a>
+            <a href="#" onclick="toggleSubMenu(event); return false;">MÜŞTERİ YÖNETİMİ</a>
+            <div class="submenu">
+                <a href="#" onclick="showContent('content-2', this); return false;">Yeni Müşteri Ekle</a>
+                <a href="#" onclick="showContent('content-4', this); return false;">Müşteri Listesi</a>
+            </div>
+             <a href="#" onclick="toggleSubMenu(event); return false;">PARÇA STOK YÖNETİMİ</a>
+            <div class="submenu">
+                <a href="#" onclick="showContent('content-5', this); return false;">Yeni Ürün Grubu</a>
+                <a href="#" onclick="showContent('content-6', this); return false;">Ürün Grupları Listesi</a>
+                <a href="#" onclick="showContent('content-7', this); return false;">Stok Girişi / Ürün</a>
+                <a href="#" onclick="showContent('content-8', this); return false;">Stok Çıkışı (Manuel)</a>
+            </div>
+             <a href="#" onclick="toggleSubMenu(event); return false;">TEDARİKÇİ YÖNETİMİ</a>
+            <div class="submenu">
+                <a href="#" onclick="showContent('content-supplier-1', this); return false;">Yeni Tedarikçi Ekle</a>
+                <a href="#" onclick="showContent('content-supplier-2', this); return false;">Tedarikçi Listesi</a>
+                <a href="#" onclick="showContent('content-supplier-3', this); return false;">Tedarikçi Hesapları</a>
+            </div>
+             <a href="#" onclick="toggleSubMenu(event); return false;">CARİ HESAPLAR (MÜŞTERİ)</a>
+            <div class="submenu">
+                <a href="#" onclick="showContent('content-9', this); return false;">Müşteri Hesap Hareketleri</a>
+                <a href="#" onclick="showContent('content-10', this); return false;">Müşteri Hesap Özetleri</a>
+            </div>
+            <a href="#" onclick="showContent('content-report-1', this); return false;">RAPORLAR</a>
+         </div>
+
+        <div class="main-content-area">
+            <div id="content-index" class="page-content active">
+                <h1>Hoş Geldiniz</h1>
+                <p>Sol menüden işlem seçebilirsiniz.</p>
+                <p>Bu sistem, servis kayıtlarınızı, müşterilerinizi, stoklarınızı, tedarikçilerinizi ve cari hesaplarınızı yönetmenize olanak tanır.</p>
+                <p>Tamamlanan servis kayıtları için "Kayıt Arşivi" bölümünden fatura oluşturabilirsiniz.</p>
+                <p>Kritik hatalar ve başarılı işlemler hakkında bilgi ekranın altında belirecektir.</p>
+            </div>
+
+             <div id="content-1-start" class="page-content">
+                <h2>Yeni Servis Kaydı Başlat</h2>
+                <p>Önce müşteri seçin ve temel bilgileri girerek kaydı başlatın. Sonraki ekranda hizmet/ürün ekleyebilirsiniz.</p>
+                <form id="startServiceForm">
+                    <div class="form-group">
+                        <label for="start-owner-1">Araç Sahibi (*)</label>
+                        <select id="start-owner-1" required>
+                            <option value="">Müşteriyi Seçin...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="start-plate-1">Araç Plakası</label>
+                        <input type="text" id="start-plate-1" placeholder="Plakayı girin (Opsiyonel)">
+                    </div>
+                    <div class="form-group">
+                        <label for="start-km-1">Araç Kilometresi</label>
+                        <input type="number" id="start-km-1" placeholder="Kilometreyi girin" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="start-complaint-1">Müşteri Şikayeti / Talebi</label>
+                        <textarea id="start-complaint-1" rows="3" placeholder="Müşterinin belirttiği sorun veya talep..."></textarea>
+                    </div>
+                    <button type="button" onclick="startNewServiceRecord()">Servis Kaydını Başlat ve Detay Ekle</button>
+                </form>
+            </div>
+
+             <div id="content-1-edit" class="page-content">
+                 <div class="section">
+                     <h2 id="editServiceRecordTitle">Aktif Servis Kaydını Düzenle (ID: <span id="activeRecordId">Yok</span>)</h2>
+                     <p id="editServiceRecordInfo" style="margin-bottom: 15px; font-style: italic; color: #555;">Henüz aktif bir servis kaydı seçilmedi...</p>
+                     <div id="editServiceRecordDetails" style="display:none; margin-bottom:15px; padding: var(--base-padding); background: #f8f9fa; border-radius:var(--border-radius); border: 1px solid var(--light-bg);">
+                          <h3 style="margin-bottom: var(--base-padding);">Kayıt Bilgileri</h3>
+                         <div class="form-group">
+                             <label for="edit-plate-1">Plaka:</label>
+                             <input type="text" id="edit-plate-1">
+                         </div>
+                         <div class="form-group">
+                             <label for="edit-km-1">KM:</label>
+                             <input type="number" id="edit-km-1" min="0">
+                         </div>
+                          <div class="form-group">
+                             <label for="edit-complaint-1">Şikayet/Talep:</label>
+                             <textarea id="edit-complaint-1" rows="2"></textarea>
+                         </div>
+                          <button type="button" id="updateServiceDetailsButton" class="warning" onclick="updateServiceRecordDetailsOnly()" disabled>Sadece Üst Bilgileri Güncelle</button>
+                     </div>
+                     <span id="editRecordStatusNote" style="margin-left: 10px; font-style: italic; color: #666;"></span>
+                     <div id="editRecordError" class="auth-error" style="text-align: left; margin-top: 10px;"></div>
+                </div>
+
+                <div class="section" id="editServiceItemSection" style="display: none;">
+                    <h3>Hizmet / Ürün Ekle</h3>
+                    <div class="form-group">
+                        <label for="itemType-1">Tür</label>
+                        <select id="itemType-1" disabled>
+                            <option value="Hizmet">Hizmet</option>
+                            <option value="Ürün">Ürün</option>
+                        </select>
+                    </div>
+                     <div class="form-group" style="display: none;"> <!-- Ürün Seçimi Başlangıçta Gizli -->
+                        <label for="productSelect-1">Ürün Seç (Stoktan) <small>(veya aşağıya manuel girin)</small></label>
+                        <select id="productSelect-1" disabled>
+                            <option value="">Stoktan Ürün Seç...</option>
+                        </select>
+                     </div>
+                    <div class="form-group">
+                        <label for="description-1">Açıklama / Ürün Adı</label>
+                        <!-- readOnly kaldırıldı -->
+                        <input type="text" id="description-1" placeholder="Yapılan iş veya ürün adı..." disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="quantity-1">Adet</label>
+                        <div class="quantity-controls">
+                            <button type="button" onclick="adjustQuantity('quantity-1', -1)" disabled>-</button>
+                            <input type="number" id="quantity-1" value="1" min="1" disabled>
+                            <button type="button" onclick="adjustQuantity('quantity-1', 1)" disabled>+</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="unitPrice-1">Birim Satış Fiyatı (₺)</label>
+                         <!-- readOnly kaldırıldı -->
+                        <input type="number" id="unitPrice-1" placeholder="Birim satış tutarını girin" step="0.01" min="0" disabled>
+                    </div>
+                    <button type="button" id="saveServiceItemButton" onclick="addServiceItemToActiveRecord()" disabled>Listeye Ekle</button>
+                </div>
+
+                <div class="section" id="editServiceItemListSection" style="display: none;">
+                    <h3>Eklenen Ürünler / Hizmetler</h3>
+                    <div class="table-wrapper">
+                        <table id="servicesTable-1">
+                            <thead>
+                                <tr>
+                                    <th>Açıklama</th>
+                                    <th>Birim Fiyat</th>
+                                    <th>Adet</th>
+                                    <th>Toplam</th>
+                                    <th>Tür</th>
+                                    <th>İşlem</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td colspan="6">Bu servis kaydına henüz ürün/hizmet eklenmedi.</td></tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3" style="text-align:right; font-weight:bold;">Ara Toplam:</td>
+                                    <td id="subtotal-1" style="font-weight:bold;">0,00 ₺</td>
+                                    <td colspan="2"></td>
+                                </tr>
+                                <tr>
+                                     <td colspan="3" style="text-align:right; font-weight:bold;">
+                                         KDV (% <input type="number" id="vatPercent-1" value="20" min="0" max="100" style="width: 70px; display: inline-block; padding: 5px; margin: 0 5px; height: 30px; font-size: 0.9em; text-align: center;" disabled>):
+                                     </td>
+                                     <td id="vatAmount-1" style="font-weight:bold;">0,00 ₺</td>
+                                     <td colspan="2"></td>
+                                </tr>
+                                 <tr>
+                                     <td colspan="3" style="text-align:right; font-weight:bold;">Genel Toplam:</td>
+                                     <td id="grandTotal-1" style="font-weight:bold; font-size: 1.15em;">0,00 ₺</td>
+                                     <td colspan="2"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                     <button type="button" id="finalizeServiceButton" onclick="finalizeServiceRecord()" disabled>Servis Kaydını Bitir</button>
+                </div>
+            </div>
+
+             <div id="content-2" class="page-content">
+                <h1 id="customerFormTitle">Yeni Müşteri Ekle</h1>
+                <form id="addCustomerForm">
+                    <input type="hidden" id="customerId-2">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--base-padding);">
+                        <div class="form-group"> <label for="firstName-2">Adı (*)</label> <input type="text" id="firstName-2" required> </div>
+                        <div class="form-group"> <label for="lastName-2">Soyadı (*)</label> <input type="text" id="lastName-2" required> </div>
+                        <div class="form-group"> <label for="phone-2">Telefon (*)</label> <input type="tel" id="phone-2" placeholder="Örn: 5xxxxxxxxx" required> </div>
+                        <div class="form-group"> <label for="district-2">İlçe/Semt</label> <input type="text" id="district-2"> </div>
+                        <div class="form-group" style="grid-column: 1 / -1;"> <label for="address-2">Adres</label> <textarea id="address-2" rows="2"></textarea> </div>
+                        <div class="form-group"> <label for="company-2">Firma Adı</label> <input type="text" id="company-2"> </div>
+                        <div class="form-group"> <label for="taxNo-2">Vergi Numarası</label> <input type="text" id="taxNo-2"> </div>
+                        <div class="form-group"> <label for="taxOffice-2">Vergi Dairesi</label> <input type="text" id="taxOffice-2"> </div>
+                    </div>
+                    <div class="form-group" style="margin-top: var(--base-padding);">
+                         <button type="submit" id="saveCustomerBtn-2">Müşteriyi Kaydet</button>
+                         <button type="button" class="secondary" onclick="resetCustomerForm(); showContent('content-4');">İptal</button>
+                    </div>
+                </form>
+             </div>
+
+             <div id="content-3" class="page-content">
+                <h1>Servis Kayıt Arşivi</h1>
+                 <div class="filter-controls">
+                    <label for="filterCustomerName-3">Müşteri:</label> <input type="text" id="filterCustomerName-3" placeholder="Ad/Soyad">
+                    <label for="filterPlate-3">Plaka:</label> <input type="text" id="filterPlate-3" placeholder="Plaka ara">
+                    <label for="filterStatus-3">Durum:</label>
+                    <select id="filterStatus-3"> <option value="">Tümü</option> <option value="OPEN">Açık</option> <option value="COMPLETED">Tamamlandı</option> <option value="CANCELLED">İptal</option> </select>
+                    <label for="filterStartDate-3">Baş. Tarihi:</label> <input type="date" id="filterStartDate-3">
+                    <label for="filterEndDate-3">Bitiş Tarihi:</label> <input type="date" id="filterEndDate-3">
+                    <button onclick="displayServiceRecords(1)">Filtrele</button>
+                    <button onclick="document.getElementById('filterCustomerName-3').value=''; document.getElementById('filterPlate-3').value=''; document.getElementById('filterStatus-3').value=''; document.getElementById('filterStartDate-3').value=''; document.getElementById('filterEndDate-3').value=''; displayServiceRecords(1);" class="secondary">Temizle</button>
+                </div>
+                <div class="table-wrapper">
+                    <table id="serviceRecordsTable-3">
+                        <thead> <tr> <th>ID</th> <th>Müşteri</th> <th>Tarih</th> <th>Plaka</th> <th>Toplam</th> <th>Durum</th> <th>Fatura</th> <th style="width: 200px;">İşlemler</th> </tr> </thead>
+                        <tbody> <tr><td colspan="8">Kayıtlar yükleniyor...</td></tr> </tbody>
+                    </table>
+                </div>
+                <div id="pagination-controls-3" style="text-align: center; margin-top: var(--base-padding);"></div>
+             </div>
+
+             <div id="content-4" class="page-content">
+                <h1>Müşteri Listesi</h1>
+                <div class="filter-controls">
+                     <label for="customerSearch-4">Ara:</label>
+                     <input type="text" id="customerSearch-4" onkeyup="displayCustomers()" placeholder="Ad, Soyad, Telefon, Firma">
+                     <label for="customerStatusFilter-4">Durum:</label>
+                     <select id="customerStatusFilter-4" onchange="displayCustomers()">
+                        <option value="">Tümü</option>
+                        <option value="active">Aktif</option>
+                        <option value="inactive">Pasif</option>
+                    </select>
+                </div>
+                <div class="table-wrapper">
+                    <table id="customersTable-4">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Ad Soyad</th>
+                                <th>Telefon</th>
+                                <th>Firma</th>
+                                <th>Durum</th>
+                                <!-- İşlemler sütun genişliğini artırıyoruz -->
+                                <th style="width: 340px;">İşlemler</th>
+                            </tr>
+                        </thead>
+                        <!-- Colspan'ı 6 yapıyoruz -->
+                        <tbody> <tr><td colspan="6">Müşteriler yükleniyor...</td></tr> </tbody>
+                    </table>
+                </div>
+             </div>
+
+             <div id="content-5" class="page-content">
+                <h1>Ürün Grupları Yönetimi</h1>
+                <div class="form-group" style="display: flex; gap: 10px; align-items: flex-end;">
+                     <div style="flex-grow: 1;">
+                        <label for="productGroupName-5">Yeni Grup Adı:</label>
+                        <input type="text" id="productGroupName-5" placeholder="Örn: Filtreler, Yağlar">
+                    </div>
+                    <button onclick="addProductGroup()" style="flex-shrink: 0;">Grubu Ekle</button>
+                </div>
+                <hr>
+                <h2>Mevcut Gruplar</h2>
+                <div id="productGroupList-5"> <p>Gruplar yükleniyor...</p> </div>
+             </div>
+
+             <div id="content-6" class="page-content">
+                <h1>Ürün Grupları Listesi</h1>
+                 <div class="filter-controls">
+                    <label for="groupSearch-6">Grup Adında Ara:</label>
+                    <input type="text" id="groupSearch-6" onkeyup="updateProductGroupTableDisplay()" placeholder="Grup adı girin...">
+                </div>
+                <div class="table-wrapper">
+                    <table id="productGroupTable-6">
+                         <thead><tr><th>ID</th><th>Grup Adı</th><th>Oluşturma Tarihi</th><th style="width: 150px;">İşlemler</th></tr></thead>
+                         <tbody><tr><td colspan="4">Gruplar yükleniyor...</td></tr></tbody>
+                    </table>
+                </div>
+             </div>
+
+              <div id="content-7" class="page-content">
+                <h1>Stok Girişi / Yeni Ürün Ekleme</h1>
+                <p>Mevcut bir ürüne stok ekleyebilir veya yeni bir ürün tanımlayabilirsiniz.</p>
+                <form id="addStockForm">
+                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--base-padding);">
+                         <div class="form-group">
+                            <label for="productName-7">Ürün Adı (*)</label>
+                            <input type="text" id="productName-7" placeholder="Yeni veya Mevcut Ürün Adı" required>
+                         </div>
+                         <div class="form-group">
+                            <label for="productGroup-7">Ürün Grubu (*)</label>
+                            <select id="productGroup-7" required> <option value="">Grup Seçin...</option> </select>
+                         </div>
+                         <div class="form-group">
+                            <label for="quantity-7">Eklenecek Miktar (*)</label>
+                            <input type="number" id="quantity-7" placeholder="Pozitif Miktar" min="1" required>
+                         </div>
+                        <div class="form-group">
+                            <label for="unitCost-7">Birim Alış Fiyatı (₺)</label>
+                            <input type="number" id="unitCost-7" placeholder="Opsiyonel (Örn: 150.75)" step="0.01" min="0">
+                        </div>
+                        <div class="form-group">
+                             <label for="supplier-7">Tedarikçi</label>
+                             <select id="supplier-7"> <option value="">Tedarikçi Seç (Opsiyonel)...</option> </select>
+                         </div>
+                          <div class="form-group">
+                             <label for="invoiceRef-7">Fatura Referansı</label>
+                             <input type="text" id="invoiceRef-7" placeholder="Tedarikçi Fatura No (Opsiyonel)">
+                         </div>
+                    </div>
+                    <div class="form-group" style="margin-top: var(--base-padding);">
+                        <button type="button" onclick="addStock()">Stok Ekle / Ürün Kaydet</button>
+                    </div>
+                 </form>
+                 <div id="stockAddError" class="auth-error" style="text-align: left;"></div>
+
+                <div class="product-list">
+                    <h3>Mevcut Stok Durumu</h3>
+                     <div class="search-box"> <input type="text" id="stockSearchInput-7" placeholder="Ürün adı veya grubunda ara..." onkeyup="updateProductStockListDisplay()"> </div>
+                    <div id="productStockList-7"> <p>Stok durumu yükleniyor...</p> </div>
+                </div>
+            </div>
+
+              <div id="content-8" class="page-content">
+                <h1>Stok Çıkışı / Ayarlama (Manuel)</h1>
+                <p>Stoktan manuel olarak ürün çıkarmak veya eklemek için kullanılır (Örn: Fire, Sayım Düzeltme).</p>
+                 <form id="adjustStockForm">
+                    <div class="form-group">
+                        <label for="productSelect-8">Ürün Seç (*)</label>
+                        <select id="productSelect-8" required> <option value="">Ürün Seç...</option> </select>
+                    </div>
+                     <div class="form-group">
+                        <label for="quantity-8">Ayarlanacak Miktar (*)</label>
+                        <input type="number" id="quantity-8" placeholder="Çıkış için negatif (-5), giriş için pozitif (5)" required>
+                        <small>Örn: Stoktan 5 adet çıkarmak için -5 girin.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="reason-8">Açıklama / Neden (*)</label>
+                        <textarea id="reason-8" rows="3" placeholder="Stok ayarlama nedeni (Örn: Sayım farkı, Fire, İade vb.)" required></textarea>
+                    </div>
+                     <button type="button" onclick="adjustStockManually()">Stok Ayarla</button>
+                 </form>
+              </div>
+
+             <div id="content-supplier-1" class="page-content">
+                    <h1 id="supplierFormTitle">Yeni Tedarikçi Ekle</h1>
+                    <form id="addSupplierForm">
+                        <input type="hidden" id="supplierId-s1">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--base-padding);">
+                            <div class="form-group"> <label for="supplierName-s1">Tedarikçi Adı (*)</label> <input type="text" id="supplierName-s1" required> </div>
+                            <div class="form-group"> <label for="supplierContact-s1">Yetkili Kişi</label> <input type="text" id="supplierContact-s1"> </div>
+                            <div class="form-group"> <label for="supplierPhone-s1">Telefon</label> <input type="tel" id="supplierPhone-s1"> </div>
+                            <div class="form-group"> <label for="supplierEmail-s1">E-posta</label> <input type="email" id="supplierEmail-s1"> </div>
+                            <div class="form-group" style="grid-column: 1 / -1;"> <label for="supplierAddress-s1">Adres</label> <textarea id="supplierAddress-s1" rows="2"></textarea> </div>
+                            <div class="form-group"> <label for="supplierTaxNo-s1">Vergi Numarası</label> <input type="text" id="supplierTaxNo-s1"> </div>
+                            <div class="form-group"> <label for="supplierTaxOffice-s1">Vergi Dairesi</label> <input type="text" id="supplierTaxOffice-s1"> </div>
+                        </div>
+                        <div class="form-group" style="margin-top: var(--base-padding);">
+                            <button type="submit" id="saveSupplierBtn-s1">Tedarikçiyi Kaydet</button>
+                            <button type="button" class="secondary" onclick="resetSupplierForm(); showContent('content-supplier-2');">İptal</button>
+                         </div>
+                    </form>
+             </div>
+
+              <div id="content-supplier-2" class="page-content">
+                <h1>Tedarikçi Listesi</h1>
+                <div class="filter-controls">
+                    <label for="supplierSearch-s2">Ara:</label>
+                    <input type="text" id="supplierSearch-s2" onkeyup="displaySuppliers()" placeholder="Ad, Yetkili, Telefon">
+                </div>
+                <div class="table-wrapper">
+                    <table id="suppliersTable-s2">
+                        <thead> <tr> <th>ID</th> <th>Adı</th> <th>Yetkili</th> <th>Telefon</th> <th style="width: 250px;">İşlemler</th> </tr> </thead>
+                        <tbody> <tr><td colspan="5">Tedarikçiler yükleniyor...</td></tr> </tbody>
+                    </table>
+                </div>
+             </div>
+
+             <div id="content-supplier-3" class="page-content">
+                <h1>Tedarikçi Hesap Hareketleri</h1>
+                 <div class="form-group">
+                    <label for="supplierSelect-s3">Tedarikçi Seç</label>
+                    <select id="supplierSelect-s3" onchange="updateSupplierAccountDetails()"> <option value="">Tedarikçi Seç...</option> </select>
+                 </div>
+                 <div id="supplierAccountDetails-s3" style="margin-bottom: var(--base-padding); padding: var(--base-padding); background: #f8f9fa; border-radius: var(--border-radius); display:none; border: 1px solid var(--light-bg);">
+                    <h3>Hesap Özeti</h3>
+                    <p><strong>Güncel Bakiye:</strong> <span id="supplierBalance-s3">0,00 ₺</span> <br><small>(Pozitif bakiye tedarikçiye olan borcu gösterir)</small></p>
+                    <hr>
+                    <h4>Yeni İşlem Ekle</h4>
+                    <form id="addSupplierTxForm">
+                        <div class="form-group">
+                            <label for="supplierTransactionAmount-s3">Tutar (₺) (*)</label>
+                            <input type="number" id="supplierTransactionAmount-s3" step="0.01" required min="0.01" placeholder="İşlem Tutarı (Örn: 100.00)">
+                        </div>
+                        <div class="form-group">
+                            <label for="supplierTransactionDesc-s3">Açıklama (*)</label>
+                            <input type="text" id="supplierTransactionDesc-s3" placeholder="Örn: Nakit Ödeme, Fatura ABC123" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="supplierTransactionInvoiceRef-s3">Fatura Ref</label>
+                            <input type="text" id="supplierTransactionInvoiceRef-s3" placeholder="İlgili Fatura No (Opsiyonel)">
+                        </div>
+                         <button type="button" id="makeSupplierPaymentButton" onclick="makeSupplierPayment()">Ödeme Yapıldı</button>
+                         <button type="button" id="addSupplierDebtButton" onclick="addSupplierDebt()">Borç Eklendi (Fatura/Alım)</button>
+                    </form>
+                 </div>
+                 <div id="supplierTransactionList-s3">
+                    <h3>Hesap Hareketleri</h3>
+                     <div class="table-wrapper">
+                        <table id="supplierTransactionsTable-s3">
+                            <thead> <tr> <th>Tarih</th> <th>Açıklama</th> <th>Tutar</th> <th>Yeni Bakiye</th> <th>Fatura Ref</th></tr> </thead>
+                            <tbody> <tr><td colspan="5">Tedarikçi seçin.</td></tr> </tbody>
+                        </table>
+                     </div>
+                 </div>
+             </div>
+
+             <div id="content-9" class="page-content">
+                <h1>Müşteri Hesap Hareketleri</h1>
+                 <div class="form-group">
+                    <label for="customerSelect-9">Müşteri Seç</label>
+                    <select id="customerSelect-9" onchange="updateAccountDetailsDisplay()"> <option value="">Müşteri Seç...</option> </select>
+                 </div>
+                 <div id="accountDetails-9" style="margin-bottom: var(--base-padding); padding: var(--base-padding); background: #f8f9fa; border-radius: var(--border-radius); display:none; border: 1px solid var(--light-bg);">
+                    <h3>Hesap Özeti</h3>
+                    <p><strong>Güncel Bakiye:</strong> <span id="currentBalance-9">0,00 ₺</span> <br><small>(Pozitif bakiye müşterinin borcunu gösterir)</small></p>
+                     <hr>
+                    <h4>Yeni İşlem Ekle (Manuel)</h4>
+                     <form id="addCustomerTxForm">
+                        <div class="form-group">
+                             <label for="transactionAmount-9">Tutar (₺) (*)</label>
+                             <input type="number" id="transactionAmount-9" step="0.01" required min="0.01" placeholder="İşlem tutarını girin (Örn: 50.00)">
+                         </div>
+                        <div class="form-group">
+                            <label for="transactionDesc-9">Açıklama (*)</label>
+                            <input type="text" id="transactionDesc-9" placeholder="Örn: Nakit Tahsilat, Ek Hizmet Bedeli" required>
+                        </div>
+                         <button type="button" id="addPaymentButton" onclick="addCustomerPayment()">Tahsilat Yapıldı</button>
+                         <button type="button" id="addDebtButton" onclick="addCustomerDebt()">Borç Eklendi</button>
+                     </form>
+                </div>
+                <div id="transactionList-9">
+                     <h3>Hesap Hareketleri</h3>
+                     <div class="table-wrapper">
+                        <table id="transactionsTable-9">
+                            <thead> <tr> <th>Tarih</th> <th>Açıklama</th> <th>Tutar</th> <th>Yeni Bakiye</th> <th>İlişkili Servis ID</th> </tr> </thead>
+                            <tbody> <tr><td colspan="5">Müşteri seçin.</td></tr> </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+             <div id="content-10" class="page-content">
+                <h1>Müşteri Hesap Özetleri</h1>
+                <div class="filter-controls">
+                    <label for="customerSearch-10">Ara:</label>
+                    <input type="text" id="customerSearch-10" onkeyup="updateAccountSummaryDisplay()" placeholder="Ad, Soyad, Firma">
+                </div>
+                 <div class="table-wrapper">
+                    <table id="accountSummaryTable-10">
+                        <thead> <tr> <th>ID</th> <th>Ad Soyad</th> <th>Firma</th> <th>Güncel Bakiye</th> <th>Son İşlem Tarihi</th> <th style="width: 180px;">İşlemler</th> </tr> </thead>
+                        <tbody> <tr><td colspan="6">Özetler yükleniyor...</td></tr> </tbody>
+                    </table>
+                </div>
+             </div>
+
+             <div id="content-report-1" class="page-content">
+                 <h1>Raporlar - Kar/Zarar Özeti</h1>
+                 <div class="report-filter">
+                     <label for="reportStartDate">Başlangıç Tarihi:</label>
+                     <input type="date" id="reportStartDate">
+                     <label for="reportEndDate">Bitiş Tarihi:</label>
+                     <input type="date" id="reportEndDate">
+                     <button onclick="generateProfitLossReport()">Raporu Oluştur</button>
+                 </div>
+
+                 <div id="report-results" style="margin-top: var(--base-padding);">
+                     <p>Tarih aralığı seçip "Raporu Oluştur" butonuna basın.</p>
+                     <div id="profitLossSummary" class="report-summary" style="display: none;">
+                         <h4>Dönem Özeti (<span id="reportDateRange">Tüm Zamanlar</span>)</h4>
+                         <p><strong>Toplam Satış Tutarı:</strong> <span id="reportTotalSales">0,00</span> ₺</p>
+                         <p><strong>Satılan Malın Maliyeti (SMM):</strong> <span id="reportTotalCOGS">0,00</span> ₺</p>
+                         <hr>
+                         <p><strong>Brüt Kar / Zarar:</strong> <span id="reportGrossProfit" style="font-weight: bold; font-size: 1.1em;">0,00</span> ₺</p>
+                     </div>
+                 </div>
+            </div>
+
+        </div> <!-- End main-content-area -->
+    </div> <!-- End app-container -->
+
+     <!-- Global Hata/Başarı Mesajı Alanı -->
+     <div id="global-error-message">
+         <span id="global-error-text"></span>
+         <button onclick="hideGlobalError()">&times;</button>
+     </div>
+
+     <!-- Modal Structure -->
+     <div id="viewModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Detaylar</h2>
+            <div id="modalBody" class="modal-body">
+                <!-- Content loaded by JS -->
+            </div>
+        </div>
+     </div>
+
+     <div id="content-4" class="page-content">
+        <h1>Müşteri Listesi</h1>
+        <div class="filter-controls">
+             <label for="customerSearch-4">Ara:</label>
+             <input type="text" id="customerSearch-4" onkeyup="displayCustomers()" placeholder="Ad, Soyad, Telefon, Firma">
+             <label for="customerStatusFilter-4">Durum:</label>
+             <select id="customerStatusFilter-4" onchange="displayCustomers()">
+                <option value="">Tümü</option>
+                <option value="active">Aktif</option>
+                <option value="inactive">Pasif</option>
+            </select>
+        </div>
+        <div class="table-wrapper">
+            <table id="customersTable-4">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Ad Soyad</th>
+                        <th>Telefon</th>
+                        <th>Firma</th>
+                        <th>Durum</th>
+                        <!-- İşlemler sütun genişliğini artırıyoruz -->
+                        <th style="width: 340px;">İşlemler</th>
+                    </tr>
+                </thead>
+                <!-- Colspan'ı 6 yapıyoruz -->
+                <tbody> <tr><td colspan="6">Müşteriler yükleniyor...</td></tr> </tbody>
+            </table>
+        </div>
+     </div>
+
+
+    <!-- Global Scripts -->
+    <script>
+        // API URL'nizi buraya girin
+        const API_URL = 'https://mtcservis.com/api'; // yourdomain.com yerine kendi alan adınızı yazın
+        let authToken = localStorage.getItem('authToken');
+        let businessName = localStorage.getItem('businessName');
+        let activeServiceRecordId = null;
+        let currentServiceData = null;
+        let errorTimeout = null;
+
+        // --- Page 4: Müşteri Listesi ---
+                // --- Page 4: Müşteri Listesi ---
+                async function displayCustomers() {
+            const tbody = document.getElementById('customersTable-4')?.querySelector('tbody');
+            if(!tbody) return;
+            // Colspan 6 olacak şekilde mesajları ayarla
+            tbody.innerHTML = '<tr><td colspan="6">Müşteriler yükleniyor...</td></tr>';
+            const searchTerm = document.getElementById('customerSearch-4').value;
+            const statusFilter = document.getElementById('customerStatusFilter-4').value;
+            const params = new URLSearchParams();
+            if (searchTerm) params.append('search', searchTerm);
+            if (statusFilter === 'active') params.append('isActive', 'true');
+            if (statusFilter === 'inactive') params.append('isActive', 'false');
+
+            try {
+                // API'den müşterileri al (includeBalance true olabilir veya olmayabilir, listeleme için fark etmez)
+                const result = await fetchApi(`/customers?${params.toString()}`);
+                const customers = Array.isArray(result) ? result : (result?.data || []);
+                tbody.innerHTML = ''; // Tabloyu temizle
+
+                if (!customers || customers.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6">Müşteri bulunamadı.</td></tr>';
+                    return;
+                }
+
+                // Her müşteri için tabloya bir satır ekle
+                customers.forEach(customer => {
+                    const row = tbody.insertRow(); // Yeni satır oluştur
+                    row.insertCell(0).textContent = customer.id; // ID
+
+                    // Silme onayı için tam adı alalım
+                    const fullName = `${customer.firstName} ${customer.lastName}`;
+                    row.insertCell(1).textContent = fullName; // Ad Soyad
+
+                    row.insertCell(2).textContent = customer.phone || '-'; // Telefon
+                    row.insertCell(3).textContent = customer.company || '-'; // Firma
+
+                    // Durum (Aktif/Pasif)
+                    const statusCell = row.insertCell(4);
+                    statusCell.innerHTML = customer.isActive
+                        ? `<span style="color:var(--primary-color); font-weight: bold;">Aktif</span>`
+                        : `<span style="color:var(--secondary-color); font-weight: bold;">Pasif</span>`;
+
+                    // İşlemler Hücresi (6. sütun, index 5)
+                    const actionsCell = row.insertCell(5);
+                    actionsCell.classList.add('action-buttons'); // Butonları yan yana dizmek için class
+
+                    // Düzenle Butonu
+                    const editButton = document.createElement('button');
+                    editButton.textContent = 'Düzenle';
+                    editButton.className = 'warning'; // Sarı buton
+                    editButton.onclick = () => editCustomer(customer.id);
+                    actionsCell.appendChild(editButton);
+
+                    // Aktif/Pasif Butonu
+                    const toggleButton = document.createElement('button');
+                    toggleButton.textContent = customer.isActive ? 'Pasif Yap' : 'Aktif Yap';
+                    toggleButton.className = customer.isActive ? 'secondary' : 'info'; // Duruma göre renk
+                    toggleButton.onclick = () => toggleCustomerActiveState(customer.id, !customer.isActive);
+                    actionsCell.appendChild(toggleButton);
+
+                    // Cari Hesap Butonu
+                    const accountButton = document.createElement('button');
+                    accountButton.textContent = 'Cari Hesap';
+                    accountButton.className = 'info'; // Mavi buton
+                    accountButton.onclick = () => {
+                        showContent('content-9'); // Cari Hesap sayfasını göster
+                        // Sayfa yüklendikten sonra dropdown'ı ayarla
+                        setTimeout(() => {
+                            const customerSelect = document.getElementById('customerSelect-9');
+                            if (customerSelect) {
+                                customerSelect.value = customer.id;
+                                updateAccountDetailsDisplay(); // Hesap detaylarını yükle
+                            }
+                        }, 100); // Küçük bir gecikme ekleyebiliriz
+                    };
+                    actionsCell.appendChild(accountButton);
+
+                    // **** YENİ SİLME BUTONU ****
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Sil';
+                    deleteButton.className = 'secondary'; // Kırmızı/uyarı rengi buton
+                    // onclick olayına deleteCustomer fonksiyonunu ata, id ve adı parametre olarak geç
+                    deleteButton.onclick = () => deleteCustomer(customer.id, fullName);
+                    actionsCell.appendChild(deleteButton); // Butonu hücreye ekle
+                    // ***************************
+                });
+            } catch (error) {
+                // Hata durumunda mesaj göster
+                tbody.innerHTML = '<tr><td colspan="6" style="color:red">Müşteriler yüklenirken bir hata oluştu.</td></tr>';
+            }
+        }
+
+        // YENİ MÜŞTERİ SİLME FONKSİYONU (Eğer daha önce eklemediyseniz buraya ekleyin)
+        // (Bir önceki cevaptaki deleteCustomer fonksiyonu burada olmalı)
+        async function deleteCustomer(id, customerName) {
+            const confirmationMessage = `!!! DİKKAT: KALICI SİLME İŞLEMİ !!!\n\n'${customerName}' (ID: ${id}) adlı müşteriyi ve bu müşteriye ait TÜM CARİ HESAP HAREKETLERİNİ kalıcı olarak silmek istediğinizden emin misiniz?\n\nBu işlem GERİ ALINAMAZ!\n\nNot: Müşterinin cari bakiyesi sıfır değilse işlem başarısız olacaktır.\n\nSilmek yerine müşteriyi PASİF yapmayı düşünebilirsiniz.`;
+
+            if (confirm(confirmationMessage)) {
+                try {
+                    await fetchApi(`/customers/${id}`, 'DELETE');
+                    showGlobalError(`Müşteri '${customerName}' başarıyla silindi.`, true);
+                    displayCustomers(); // Müşteri listesini yenile
+                } catch (error) {
+                    console.error(`Müşteri silinirken hata (ID: ${id}):`, error);
+                    // fetchApi zaten hatayı gösteriyor olmalı
+                }
+            } else {
+                showGlobalError("Müşteri silme işlemi iptal edildi.", false, 3000);
+            }
+        }
+
+        // --- (Diğer JavaScript fonksiyonlarınız burada devam eder) ---
+
+        async function editCustomer(id) {
+            resetCustomerForm();
+            try {
+                const customer = await fetchApi(`/customers/${id}`);
+                if (!customer) { showGlobalError("Müşteri bilgileri alınamadı."); return; }
+                document.getElementById('customerId-2').value = customer.id;
+                document.getElementById('firstName-2').value = customer.firstName;
+                document.getElementById('lastName-2').value = customer.lastName;
+                document.getElementById('phone-2').value = customer.phone || '';
+                document.getElementById('district-2').value = customer.district || '';
+                document.getElementById('address-2').value = customer.address || '';
+                document.getElementById('company-2').value = customer.company || '';
+                document.getElementById('taxNo-2').value = customer.taxNo || '';
+                document.getElementById('taxOffice-2').value = customer.taxOffice || '';
+                document.getElementById('saveCustomerBtn-2').textContent = 'Değişiklikleri Kaydet';
+                document.getElementById('customerFormTitle').textContent = 'Müşteriyi Düzenle';
+                showContent('content-2');
+            } catch (error) { /* fetchApi hatayı gösterir */ }
+        }
+
+        async function toggleCustomerActiveState(id, newState) {
+            const actionText = newState ? "aktif" : "pasif";
+            if (confirm(`Müşteriyi ${actionText} yapmak istediğinizden emin misiniz?`)) {
+                try {
+                    // API PUT isteği zaten isActive durumunu alıyor, tekrar customer getirmeye gerek yok.
+                    await fetchApi(`/customers/${id}`, 'PUT', { isActive: newState }); // Sadece durumu güncellemek yeterli olabilir ama tümünü göndermek daha garanti
+                    // Backend PUT endpoint'inin sadece gönderilen alanları güncellediğinden emin olun veya tüm alanları gönderin
+                    // Örnek olarak sadece isActive gönderelim: (Backend'in bunu desteklemesi lazım)
+                     // VEYA ÖNCE GET İLE ALIP SONRA GÜNCELLE:
+                     const customer = await fetchApi(`/customers/${id}`);
+                     if (!customer) throw new Error("Müşteri bulunamadı.");
+                     const updatedCustomerData = { ...customer, isActive: newState };
+                     await fetchApi(`/customers/${id}`, 'PUT', updatedCustomerData);
+
+                    showGlobalError(`Müşteri durumu ${actionText} olarak güncellendi.`, true);
+                    displayCustomers(); // Listeyi yenile
+                } catch (error) { /* fetchApi hatayı gösterir */ }
+            }
+        }
+
+        // --- YENİ MÜŞTERİ SİLME FONKSİYONU ---
+        async function deleteCustomer(id, customerName) {
+            // Kullanıcıyı çok net uyar!
+            const confirmationMessage = `!!! DİKKAT: KALICI SİLME İŞLEMİ !!!\n\n'${customerName}' (ID: ${id}) adlı müşteriyi ve bu müşteriye ait TÜM CARİ HESAP HAREKETLERİNİ kalıcı olarak silmek istediğinizden emin misiniz?\n\nBu işlem GERİ ALINAMAZ!\n\nNot: Müşterinin cari bakiyesi sıfır değilse işlem başarısız olacaktır.\n\nSilmek yerine müşteriyi PASİF yapmayı düşünebilirsiniz.`;
+
+            if (confirm(confirmationMessage)) {
+                try {
+                    await fetchApi(`/customers/${id}`, 'DELETE');
+                    showGlobalError(`Müşteri '${customerName}' başarıyla silindi.`, true);
+                    displayCustomers(); // Müşteri listesini yenile
+                } catch (error) {
+                    // fetchApi zaten genellikle hatayı gösterir, ama yine de loglayalım
+                    console.error(`Müşteri silinirken hata (ID: ${id}):`, error);
+                    // Backend'den gelen özel hata mesajı (örn. bakiye sıfır değil) zaten showGlobalError ile gösterilmiş olmalı.
+                }
+            } else {
+                // Kullanıcı iptal etti
+                showGlobalError("Müşteri silme işlemi iptal edildi.", false, 3000);
+            }
+        }
+        // --------------------------------------
+
+
+        // --- Hata Gösterim Fonksiyonları ---
+        function showGlobalError(message, isSuccess = false, duration = 5000) {
+            const errorDiv = document.getElementById('global-error-message');
+            const errorText = document.getElementById('global-error-text');
+            if (!errorDiv || !errorText) return;
+            errorText.textContent = message;
+            errorDiv.className = 'global-error-message';
+             if (isSuccess) errorDiv.classList.add('success');
+            if (errorTimeout) clearTimeout(errorTimeout);
+             errorDiv.classList.add('show');
+            errorTimeout = setTimeout(() => { hideGlobalError(); }, duration);
+        }
+        function hideGlobalError() {
+             const errorDiv = document.getElementById('global-error-message');
+            if (errorDiv) errorDiv.classList.remove('show');
+            if (errorTimeout) { clearTimeout(errorTimeout); errorTimeout = null; }
+        }
+
+        // --- API Helper ---
+        async function fetchApi(endpoint, method = 'GET', body = null) {
+            hideGlobalError();
+            const headers = { 'Content-Type': 'application/json', };
+            if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
+            const options = { method, headers, };
+            if (body && (method === 'POST' || method === 'PUT' || method === 'DELETE')) options.body = JSON.stringify(body);
+            try {
+                const response = await fetch(`${API_URL}${endpoint}`, options);
+                if (response.status === 401 || response.status === 403) { logout(); showGlobalError('Yetkisiz işlem veya oturum süresi doldu.'); return Promise.reject({ status: response.status, message: 'Yetkisiz veya Oturum Süresi Doldu' }); }
+                if (!response.ok) {
+                     let errorData = { message: `API isteği başarısız: ${response.status} ${response.statusText}` };
+                     try { const errorJson = await response.json(); errorData.message = errorJson.message || errorData.message; if (errorJson.invoiceId) errorData.invoiceId = errorJson.invoiceId; } catch (e) { }
+                     console.error(`API Error ${response.status}:`, errorData.message); throw new Error(errorData.message, { cause: errorData });
+                }
+                if (response.status === 204) return null;
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/json") !== -1) return await response.json();
+                else { console.warn("API yanıtı JSON formatında değil:", endpoint); return await response.text(); }
+            } catch (error) { console.error('Fetch API error:', error); showGlobalError(`İşlem sırasında hata oluştu: ${error.message}`); throw error; }
+        }
+
+        // --- Authentication & Registration ---
+        function showLoginScreen() { document.getElementById('registration-screen').classList.remove('active'); document.getElementById('login-screen').classList.add('active'); document.getElementById('registration-error').textContent = ''; document.getElementById('registrationForm')?.reset(); }
+        function showRegistrationScreen() { document.getElementById('login-screen').classList.remove('active'); document.getElementById('registration-screen').classList.add('active'); document.getElementById('login-error').textContent = ''; document.getElementById('loginForm')?.reset(); }
+
+        document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const businessCode = document.getElementById('login_business_code').value; const password = document.getElementById('login_password').value; const errorDiv = document.getElementById('login-error'); errorDiv.textContent = '';
+            try {
+                const data = await fetchApi('/login', 'POST', { business_code: businessCode, password: password });
+                authToken = data.accessToken; businessName = data.businessName; localStorage.setItem('authToken', authToken); localStorage.setItem('businessName', businessName);
+                document.getElementById('login-screen').classList.remove('active'); document.getElementById('registration-screen').classList.remove('active'); document.getElementById('app-container').style.display = 'flex'; document.getElementById('businessNameDisplay').textContent = `İşletme: ${businessName}`; showContent('content-index');
+            } catch (error) { console.error('Login failed:', error); errorDiv.textContent = `Giriş başarısız: ${error.message || 'Sunucu hatası'}`; }
+        });
+        document.getElementById('registrationForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault(); const businessCode = document.getElementById('reg_business_code').value.trim(); const businessNameInput = document.getElementById('reg_business_name').value.trim(); const password = document.getElementById('reg_password').value; const confirmPassword = document.getElementById('reg_confirm_password').value; const errorDiv = document.getElementById('registration-error'); errorDiv.textContent = '';
+            if (!businessCode || !businessNameInput || !password || !confirmPassword) { errorDiv.textContent = 'Lütfen tüm alanları doldurun.'; return; } if (password !== confirmPassword) { errorDiv.textContent = 'Şifreler eşleşmiyor.'; return; } if (password.length < 6) { errorDiv.textContent = 'Şifre en az 6 karakter olmalıdır.'; return; }
+            try {
+                 await fetchApi('/register', 'POST', { business_code: businessCode, password: password, name: businessNameInput });
+                showGlobalError('İşletme kaydı başarıyla tamamlandı! Lütfen giriş yapın.', true); showLoginScreen();
+            } catch (error) { console.error('Registration failed:', error); errorDiv.textContent = `Kayıt başarısız: ${error.message || 'Sunucu hatası'}`; }
+        });
+        function logout() {
+            authToken = null; businessName = null; activeServiceRecordId = null; currentServiceData = null; localStorage.removeItem('authToken'); localStorage.removeItem('businessName'); document.getElementById('app-container').style.display = 'none'; showLoginScreen(); document.getElementById('login-error').textContent = ''; document.getElementById('loginForm')?.reset(); document.getElementById('registrationForm')?.reset(); document.getElementById('registration-error').textContent = '';
+        }
+
+        // --- Sayfa Yüklendiğinde Kontrol ve Event Listener'lar ---
+        document.addEventListener('DOMContentLoaded', () => {
+            authToken = localStorage.getItem('authToken'); businessName = localStorage.getItem('businessName');
+            if (authToken && businessName) { document.getElementById('login-screen').classList.remove('active'); document.getElementById('registration-screen').classList.remove('active'); document.getElementById('app-container').style.display = 'flex'; document.getElementById('businessNameDisplay').textContent = `İşletme: ${businessName}`; showContent('content-index'); } else { showLoginScreen(); document.getElementById('app-container').style.display = 'none'; }
+            document.getElementById('addCustomerForm')?.addEventListener('submit', saveCustomer); document.getElementById('addSupplierForm')?.addEventListener('submit', saveSupplier);
+             document.getElementById('itemType-1')?.addEventListener('change', handleItemTypeChange); document.getElementById('productSelect-1')?.addEventListener('change', handleProductSelectionChange);
+        });
+
+        // --- Navigation Logic ---
+        function toggleSubMenu(event) {
+            event.preventDefault(); const link = event.currentTarget; const submenu = link.nextElementSibling; const sidebar = link.closest('.sidebar');
+            if (submenu && submenu.classList.contains('submenu') && sidebar) {
+                const isActive = link.classList.contains('active'); sidebar.querySelectorAll('a.active + .submenu').forEach(otherSubmenu => { if (otherSubmenu !== submenu) { otherSubmenu.style.maxHeight = '0'; otherSubmenu.previousElementSibling.classList.remove('active'); } });
+                if (!isActive) { link.classList.add("active"); submenu.style.display = 'flex'; requestAnimationFrame(() => { requestAnimationFrame(() => { submenu.style.maxHeight = submenu.scrollHeight + "px"; }); }); } else { link.classList.remove("active"); submenu.style.maxHeight = "0"; submenu.addEventListener('transitionend', () => { if (submenu.style.maxHeight === '0px') submenu.style.display = 'none'; }, { once: true }); }
+            }
+        }
+        function showContent(contentId, clickedLink = null) {
+            hideGlobalError();
+            if (contentId !== 'content-2' && document.getElementById('addCustomerForm')) resetCustomerForm(); if (contentId !== 'content-supplier-1' && document.getElementById('addSupplierForm')) resetSupplierForm(); if (contentId !== 'content-1-edit') resetServiceItemForm();
+            document.querySelectorAll('.page-content').forEach(page => page.classList.remove('active'));
+            const targetPage = document.getElementById(contentId);
+            if (targetPage) {
+                targetPage.classList.add('active'); window.scrollTo(0, 0);
+                switch(contentId) {
+                    case 'content-1-start': updateServiceStartCustomerDropdown(); break;
+                    case 'content-1-edit': loadActiveServiceRecordForEditing(); const vatInput = document.getElementById('vatPercent-1'); if (vatInput) { vatInput.removeEventListener('input', handleVatChange); vatInput.addEventListener('input', handleVatChange); } handleItemTypeChange(); break;
+                    case 'content-2': document.getElementById('customerFormTitle').textContent = document.getElementById('customerId-2').value ? 'Müşteriyi Düzenle' : 'Yeni Müşteri Ekle'; break;
+                    case 'content-3': displayServiceRecords(1); break;
+                    case 'content-4': displayCustomers(); break;
+                    case 'content-5': updateProductGroupListDisplay(); break;
+                    case 'content-6': updateProductGroupTableDisplay(); break;
+                    case 'content-7': updateStockEntryPage(); break;
+                    case 'content-8': updateStockExitPage(); break;
+                    case 'content-9': updateAccountManagementPage(); break;
+                    case 'content-10': updateAccountSummaryPage(); break;
+                    case 'content-supplier-1': document.getElementById('supplierFormTitle').textContent = document.getElementById('supplierId-s1').value ? 'Tedarikçiyi Düzenle' : 'Yeni Tedarikçi Ekle'; break;
+                    case 'content-supplier-2': displaySuppliers(); break;
+                    case 'content-supplier-3': updateSupplierAccountPage(); break;
+                    case 'content-report-1': document.getElementById('reportStartDate').value = ''; document.getElementById('reportEndDate').value = ''; document.getElementById('profitLossSummary').style.display = 'none'; document.getElementById('report-results').innerHTML = '<p>Tarih aralığı seçip "Raporu Oluştur" butonuna basın.</p>'; break;
+                    default: document.getElementById('content-index')?.classList.add('active');
+                }
+            } else { console.error("Content ID not found:", contentId); document.getElementById('content-index')?.classList.add('active'); }
+            document.querySelectorAll('.sidebar a').forEach(link => link.classList.remove('active-link')); document.querySelectorAll('.sidebar a.active').forEach(link => link.classList.remove('active'));
+            if (clickedLink) {
+                 clickedLink.classList.add('active-link'); const parentSubmenuTrigger = clickedLink.closest('.submenu')?.previousElementSibling;
+                if (parentSubmenuTrigger && parentSubmenuTrigger.tagName === 'A') { parentSubmenuTrigger.classList.add('active'); parentSubmenuTrigger.classList.add('active-link'); const submenu = parentSubmenuTrigger.nextElementSibling; if (submenu && submenu.classList.contains('submenu')) { submenu.style.display = 'flex'; submenu.style.maxHeight = submenu.scrollHeight + "px"; } } else if (clickedLink.nextElementSibling?.classList.contains('submenu')) { clickedLink.classList.add('active'); }
+                 if (!clickedLink.closest('.submenu')) { document.querySelectorAll('.sidebar a.active + .submenu').forEach(openSubmenu => { if (openSubmenu !== clickedLink.nextElementSibling) { openSubmenu.style.maxHeight = '0'; openSubmenu.previousElementSibling.classList.remove('active'); } }); }
+            }
+        }
+
+        // --- Helper Functions ---
+        function formatCurrency(amount) { if (typeof amount !== 'number' || isNaN(amount)) amount = 0; return amount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' }); }
+        function formatDate(isoString) { if (!isoString) return '--'; try { const date = new Date(isoString); if (isNaN(date.getTime())) return '--'; return date.toLocaleDateString('sv-SE'); } catch (e) { console.error("Error formatting date:", isoString, e); return isoString; } }
+        function formatDateTime(isoString) { if (!isoString) return '--'; try { const date = new Date(isoString); if (isNaN(date.getTime())) return '--'; return date.toLocaleString('tr-TR', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }); } catch (e) { console.error("Error formatting date:", isoString, e); return isoString; } }
+        async function populateDropdown(selectId, endpoint, valueField, textField, prompt, addBalance = false, queryParams = {}) {
+            const select = document.getElementById(selectId); if (!select) { console.error(`Dropdown element not found: ${selectId}`); return; } select.innerHTML = `<option value="">${prompt}</option>`; const urlParams = new URLSearchParams(queryParams).toString(); const fullEndpoint = urlParams ? `${endpoint}?${urlParams}` : endpoint;
+            try {
+                const data = await fetchApi(fullEndpoint); let items = data; if (data && !Array.isArray(data) && Array.isArray(data.data)) items = data.data; else if (!Array.isArray(data)) throw new Error("API'den beklenen dizi formatında veri gelmedi.");
+                items.sort((a, b) => { const textA = (typeof textField === 'function' ? textField(a) : a[textField]) || ''; const textB = (typeof textField === 'function' ? textField(b) : b[textField]) || ''; return textA.localeCompare(textB, 'tr', { sensitivity: 'base' }); });
+                items.forEach(item => { const option = document.createElement('option'); option.value = item[valueField]; let text = typeof textField === 'function' ? textField(item) : item[textField]; if (addBalance && item.current_balance !== undefined && item.current_balance !== null) text += ` (Bakiye: ${formatCurrency(item.current_balance)})`; if (selectId === 'productSelect-1' && item.name && item.last_unit_cost !== undefined && item.current_stock !== undefined) { option.dataset.name = item.name; option.dataset.cost = Number(item.last_unit_cost || 0); option.dataset.stock = item.current_stock || 0; } option.textContent = text; select.appendChild(option); });
+            } catch (error) { console.error(`Error populating dropdown ${selectId}:`, error); select.innerHTML = `<option value="">Hata: Veri yüklenemedi</option>`; }
+        }
+
+        // --- Page 1 START: Yeni Servis Kaydı Başlat ---
+        async function updateServiceStartCustomerDropdown() { await populateDropdown('start-owner-1', '/customers', 'id', item => `${item.firstName} ${item.lastName} ${item.company ? '('+item.company+')' : ''} (ID: ${item.id})`, 'Müşteri Seçin...', false, { isActive: true }); }
+        async function startNewServiceRecord() {
+             const form = document.getElementById('startServiceForm'); const customerId = document.getElementById('start-owner-1').value; const plateInput = document.getElementById('start-plate-1'); const plate = plateInput.value.trim().toUpperCase(); const kmInput = document.getElementById('start-km-1'); const km = kmInput.value ? parseInt(kmInput.value) : null; const complaint = document.getElementById('start-complaint-1').value.trim();
+            if (!customerId) { showGlobalError('Lütfen bir müşteri seçin.'); document.getElementById('start-owner-1').focus(); return; } if (km !== null && (isNaN(km) || km < 0)) { showGlobalError('Geçerli bir kilometre girin (sadece rakam) veya boş bırakın.'); kmInput.focus(); return; } if (plate && plate.length > 15) { showGlobalError('Plaka çok uzun görünüyor.'); plateInput.focus(); return; }
+            try { const result = await fetchApi('/service-records/start', 'POST', { customerId, plate, km, complaint }); activeServiceRecordId = result.serviceRecordId; currentServiceData = null; showGlobalError(`Servis kaydı #${activeServiceRecordId} başarıyla başlatıldı. Şimdi ürün/hizmet ekleyebilirsiniz.`, true, 7000); form.reset(); showContent('content-1-edit'); } catch (error) { }
+        }
+
+        // --- Page 1 EDIT: Aktif Servis Kaydı Düzenle ---
+        function resetServiceEditPage() {
+             document.getElementById('activeRecordId').textContent = 'Yok'; document.getElementById('editServiceRecordInfo').textContent = 'Aktif kayıt yok veya seçilmedi.'; document.getElementById('editServiceRecordDetails').style.display = 'none'; document.getElementById('editServiceItemSection').style.display = 'none'; document.getElementById('editServiceItemListSection').style.display = 'none'; document.getElementById('edit-plate-1').value = ''; document.getElementById('edit-km-1').value = ''; document.getElementById('edit-complaint-1').value = ''; const serviceTableBody = document.getElementById('servicesTable-1')?.querySelector('tbody'); if(serviceTableBody) serviceTableBody.innerHTML = '<tr><td colspan="6">Aktif kayıt yok.</td></tr>'; document.getElementById('subtotal-1').textContent = formatCurrency(0); document.getElementById('vatAmount-1').textContent = formatCurrency(0); document.getElementById('grandTotal-1').textContent = formatCurrency(0); document.getElementById('vatPercent-1').value = 20; document.getElementById('finalizeServiceButton').disabled = true; document.getElementById('updateServiceDetailsButton').disabled = true; document.getElementById('saveServiceItemButton').disabled = true; document.getElementById('itemType-1').disabled = true; document.getElementById('productSelect-1').disabled = true; document.getElementById('description-1').disabled = true; document.getElementById('quantity-1').disabled = true; document.getElementById('unitPrice-1').disabled = true; document.getElementById('vatPercent-1').disabled = true; document.querySelectorAll('#content-1-edit .quantity-controls button').forEach(btn => btn.disabled = true); document.getElementById('editRecordStatusNote').textContent = ''; document.getElementById('editRecordError').textContent = ''; resetServiceItemForm();
+        }
+        function resetServiceItemForm() {
+             const itemTypeSelect = document.getElementById('itemType-1'); const productSelect = document.getElementById('productSelect-1'); const descriptionInput = document.getElementById('description-1'); const quantityInput = document.getElementById('quantity-1'); const unitPriceInput = document.getElementById('unitPrice-1');
+            if (itemTypeSelect) itemTypeSelect.value = 'Hizmet'; if (productSelect) { productSelect.value = ''; productSelect.innerHTML = '<option value="">Stoktan Ürün Seç...</option>'; if(productSelect.parentElement) productSelect.parentElement.style.display = 'none'; } if (descriptionInput) { descriptionInput.value = ''; descriptionInput.readOnly = false; } if (quantityInput) quantityInput.value = 1; if (unitPriceInput) { unitPriceInput.value = ''; unitPriceInput.readOnly = false; unitPriceInput.placeholder = 'Birim satış tutarını girin'; }
+        }
+        async function loadActiveServiceRecordForEditing() {
+            resetServiceEditPage(); if (!activeServiceRecordId) { document.getElementById('editServiceRecordInfo').textContent = 'Yeni bir servis kaydı başlatın veya arşivden düzenlemek için açık bir kayıt seçin.'; return; } document.getElementById('editRecordError').textContent = '';
+            try {
+                currentServiceData = await fetchApi(`/service-records/${activeServiceRecordId}`);
+                if (!currentServiceData) { activeServiceRecordId = null; resetServiceEditPage(); showGlobalError("Aktif servis kaydı bulunamadı veya yüklenemedi."); return; }
+                document.getElementById('activeRecordId').textContent = activeServiceRecordId; document.getElementById('editServiceRecordInfo').textContent = `ID: ${activeServiceRecordId} | Müşteri: ${currentServiceData.customerName_snapshot || 'Bilinmiyor'} | Durum: ${currentServiceData.status} | Tarih: ${formatDateTime(currentServiceData.date || currentServiceData.created_at)}`; document.getElementById('editServiceRecordDetails').style.display = 'block'; document.getElementById('edit-plate-1').value = currentServiceData.plate || ''; document.getElementById('edit-km-1').value = currentServiceData.km || ''; document.getElementById('edit-complaint-1').value = currentServiceData.complaint || ''; document.getElementById('vatPercent-1').value = currentServiceData.vatPercent || 20; document.getElementById('editServiceItemSection').style.display = 'block'; document.getElementById('editServiceItemListSection').style.display = 'block'; displayCurrentServiceItems(currentServiceData.items || []); await updateServiceRecordProductDropdown();
+                const isClosed = currentServiceData.status === 'COMPLETED' || currentServiceData.status === 'CANCELLED'; const isOpen = currentServiceData.status === 'OPEN';
+                document.getElementById('finalizeServiceButton').disabled = !isOpen || !(currentServiceData.items && currentServiceData.items.length > 0); document.getElementById('updateServiceDetailsButton').disabled = !isOpen; document.getElementById('saveServiceItemButton').disabled = !isOpen; document.getElementById('edit-plate-1').disabled = !isOpen; document.getElementById('edit-km-1').disabled = !isOpen; document.getElementById('edit-complaint-1').disabled = !isOpen; document.getElementById('itemType-1').disabled = !isOpen; document.getElementById('productSelect-1').disabled = !isOpen; document.getElementById('description-1').disabled = !isOpen; document.getElementById('quantity-1').disabled = !isOpen; document.getElementById('unitPrice-1').disabled = !isOpen; document.getElementById('vatPercent-1').disabled = !isOpen; document.querySelectorAll('#content-1-edit .quantity-controls button').forEach(btn => btn.disabled = !isOpen); document.getElementById('editRecordStatusNote').textContent = isClosed ? 'Bu kayıt tamamlandığı/iptal edildiği için düzenlenemez.' : (isOpen ? '' : `Durum: ${currentServiceData.status}`);
+                // Always call handleItemTypeChange, even for closed records, to set correct state
+                handleItemTypeChange();
+            } catch (error) { activeServiceRecordId = null; currentServiceData = null; resetServiceEditPage(); }
+        }
+        function handleVatChange() { if (currentServiceData) calculateServiceTotals(currentServiceData.items || []); }
+
+        // Updated handleItemTypeChange to keep inputs editable for 'Ürün'
+        function handleItemTypeChange() {
+            const itemTypeSelect = document.getElementById('itemType-1');
+            const productSelectGroup = document.getElementById('productSelect-1')?.parentElement;
+            const descriptionInput = document.getElementById('description-1');
+            const unitPriceInput = document.getElementById('unitPrice-1');
+
+            if (!itemTypeSelect || !productSelectGroup || !descriptionInput || !unitPriceInput) return;
+
+            const isClosed = !(currentServiceData && currentServiceData.status === 'OPEN');
+
+            if (itemTypeSelect.value === 'Ürün') {
+                productSelectGroup.style.display = 'block';
+                // Keep description and price editable
+                descriptionInput.readOnly = isClosed; // Sadece kapalıysa readonly
+                unitPriceInput.readOnly = isClosed;  // Sadece kapalıysa readonly
+                if (!isClosed) {
+                   updateServiceRecordProductDropdown(); // Update dropdown for open records
+                   document.getElementById('productSelect-1').value = ''; // Reset selection
+                   descriptionInput.value = ''; // Clear description
+                   unitPriceInput.value = ''; // Clear price
+                   unitPriceInput.placeholder = 'Stoktan seçin veya manuel girin';
+                }
+                 productSelectGroup.querySelector('select').disabled = isClosed;
+            } else { // Hizmet seçildiğinde
+                productSelectGroup.style.display = 'none';
+                descriptionInput.readOnly = isClosed; // Sadece kapalıysa readonly
+                unitPriceInput.readOnly = isClosed;  // Sadece kapalıysa readonly
+                 if (!isClosed) {
+                   document.getElementById('productSelect-1').value = ''; // Reset product selection
+                   descriptionInput.value = '';
+                   unitPriceInput.value = '';
+                   unitPriceInput.placeholder = 'Hizmet açıklamasını ve birim fiyatını girin';
+                }
+            }
+            // Ensure main inputs are disabled if closed, regardless of type
+            descriptionInput.disabled = isClosed;
+            unitPriceInput.disabled = isClosed;
+        }
+
+        async function updateServiceRecordProductDropdown() { await populateDropdown('productSelect-1', '/stock', 'id', item => `${item.name} (Stok: ${item.current_stock || 0})`, 'Stoktan Ürün Seç...'); }
+
+        // Updated handleProductSelectionChange - Suggests price, but keeps price editable
+        function handleProductSelectionChange() {
+            const productSelect = document.getElementById('productSelect-1');
+            const selectedOption = productSelect.options[productSelect.selectedIndex];
+            const descriptionInput = document.getElementById('description-1');
+            const unitPriceInput = document.getElementById('unitPrice-1');
+             if (!descriptionInput || !unitPriceInput) return; // Ensure elements exist
+            const isClosed = !(currentServiceData && currentServiceData.status === 'OPEN');
+
+            if (selectedOption && selectedOption.value && selectedOption.dataset.name) {
+                const productName = selectedOption.dataset.name;
+                const productCost = parseFloat(selectedOption.dataset.cost || 0);
+                const productStock = parseInt(selectedOption.dataset.stock || 0);
+
+                descriptionInput.value = productName;
+                unitPriceInput.value = ''; // Fiyatı temizle, kullanıcı manuel girebilir
+                if (productCost > 0) {
+                    // Maliyete göre fiyat öner, ama readonly yapma
+                    unitPriceInput.placeholder = `Önerilen: ${formatCurrency(productCost * 1.5)}. Stok: ${productStock}`;
+                } else {
+                     unitPriceInput.placeholder = `Stok: ${productStock}. Satış Fiyatı Girin`;
+                }
+                 if (!isClosed) unitPriceInput.focus(); // Kayıt açıksa fiyata odaklan
+            } else {
+                // "Seçiniz" seçilirse, açıklamayı temizle ve fiyatı düzenlenebilir yap
+                descriptionInput.value = '';
+                unitPriceInput.value = '';
+                unitPriceInput.placeholder = 'Birim satış tutarını girin';
+            }
+        }
+
+        // Updated addServiceItemToActiveRecord to handle manual product entry
+        async function addServiceItemToActiveRecord() {
+            if (!activeServiceRecordId) { showGlobalError('Önce bir servis kaydı seçmelisiniz.'); return; }
+            if (!currentServiceData || currentServiceData.status !== 'OPEN') { showGlobalError('Sadece "Açık" durumdaki kayıtlara ürün/hizmet ekleyebilirsiniz.'); return; }
+
+            const itemType = document.getElementById('itemType-1').value;
+            const productSelect = document.getElementById('productSelect-1');
+            const descriptionInput = document.getElementById('description-1');
+            const description = descriptionInput.value.trim();
+            const quantityInput = document.getElementById('quantity-1');
+            const quantity = parseInt(quantityInput.value);
+            const unitPriceInput = document.getElementById('unitPrice-1');
+            const unitPrice = parseFloat(unitPriceInput.value);
+
+            let productId = null; // Başlangıçta null
+            let isManualProduct = false;
+
+            if (itemType === 'Ürün') {
+                 const selectedOption = productSelect.options[productSelect.selectedIndex];
+                 // Geçerli bir ürün seçilmiş mi VE adı açıklama ile EŞLEŞİYOR mu?
+                 if (selectedOption && selectedOption.value && selectedOption.dataset.name && selectedOption.dataset.name === description) {
+                      productId = selectedOption.value; // Seçilen ürün ID'sini kullan
+                 } else if(description) { // Seçim yok veya açıklama değişmiş AMA açıklama boş değilse
+                      isManualProduct = true; // Kullanıcı özel isim yazdı veya seçimi değiştirdi
+                      productId = null; // Manuel giriş olduğunu belirtmek için null
+                 }
+                 // Eğer description boşsa zaten aşağıda hata verecek
+            }
+
+            // Validations
+            if (!description) { showGlobalError('Açıklama/Ürün Adı girilmelidir.'); descriptionInput.focus(); return; }
+            if (isNaN(quantity) || quantity <= 0) { showGlobalError('Geçerli bir adet girin (en az 1).'); quantityInput.focus(); return; }
+            if (isNaN(unitPrice) || unitPrice < 0) { showGlobalError('Geçerli bir birim satış fiyatı girin (0 veya daha büyük).'); unitPriceInput.focus(); return; }
+            // Artık Ürün tipi için productId kontrolüne gerek yok, manuel giriş mümkün.
+
+            try {
+                const newItem = {
+                    type: itemType,
+                    productId: productId, // Hizmet veya manuel Ürün için null olacak
+                    description: description,
+                    quantity: quantity,
+                    unitPrice: unitPrice
+                 };
+
+                // Backend, productId var mı yok mu kontrol ederek stok mantığını yönetecek
+                await fetchApi(`/service-records/${activeServiceRecordId}/items`, 'POST', newItem);
+
+                // Başarı mesajını duruma göre ayarla
+                const successMessage = isManualProduct
+                    ? 'Manuel ürün başarıyla eklendi (stok etkilenmedi).'
+                    : (itemType === 'Ürün' ? 'Ürün başarıyla eklendi ve stok güncellendi.' : 'Hizmet başarıyla eklendi.');
+                showGlobalError(successMessage, true);
+
+                resetServiceItemForm(); // Formu temizle
+                loadActiveServiceRecordForEditing(); // Kaydı yeniden yükle
+
+            } catch (error) {
+                // fetchApi hatayı zaten gösteriyor (stok yetersiz vb.)
+            }
+        }
+
+        function adjustQuantity(inputId, amount) { const qtyInput = document.getElementById(inputId); const button = event.target; if (!qtyInput || !button || button.disabled) return; let currentValue = parseInt(qtyInput.value); if (isNaN(currentValue)) currentValue = 1; let newValue = currentValue + amount; if (newValue < 1) newValue = 1; qtyInput.value = newValue; }
+
+        // Updated addServiceItemToActiveRecord to handle manual product entry
+        async function addServiceItemToActiveRecord() {
+            if (!activeServiceRecordId) { showGlobalError('Önce bir servis kaydı seçmelisiniz.'); return; } if (!currentServiceData || currentServiceData.status !== 'OPEN') { showGlobalError('Sadece "Açık" durumdaki kayıtlara ürün/hizmet ekleyebilirsiniz.'); return; }
+
+            const itemType = document.getElementById('itemType-1').value;
+            const productSelect = document.getElementById('productSelect-1');
+            const descriptionInput = document.getElementById('description-1');
+            const description = descriptionInput.value.trim();
+            const quantityInput = document.getElementById('quantity-1');
+            const quantity = parseInt(quantityInput.value);
+            const unitPriceInput = document.getElementById('unitPrice-1');
+            const unitPrice = parseFloat(unitPriceInput.value);
+
+            let productId = null;
+            let isManualProduct = false;
+
+            if (itemType === 'Ürün') {
+                 const selectedOption = productSelect.options[productSelect.selectedIndex];
+                 // Check if a valid product is selected AND its name matches the description input
+                 if (selectedOption && selectedOption.value && selectedOption.dataset.name === description) {
+                      productId = selectedOption.value; // Use the selected product ID
+                 } else {
+                      isManualProduct = true; // User typed a custom name or changed it after selection
+                      productId = null;
+                 }
+            }
+
+            // Validations
+            if (!description) { showGlobalError('Açıklama/Ürün Adı girilmelidir.'); descriptionInput.focus(); return; }
+            if (isNaN(quantity) || quantity <= 0) { showGlobalError('Geçerli bir adet girin (en az 1).'); quantityInput.focus(); return; }
+            if (isNaN(unitPrice) || unitPrice < 0) { showGlobalError('Geçerli bir birim satış fiyatı girin (0 veya daha büyük).'); unitPriceInput.focus(); return; }
+            // No longer need to check if productId exists if itemType is Ürün, as manual entry is allowed
+
+            try {
+                const newItem = {
+                    type: itemType,
+                    productId: productId, // Will be null for Hizmet or manual Ürün entry
+                    description: description,
+                    quantity: quantity,
+                    unitPrice: unitPrice
+                 };
+
+                // Backend will handle stock logic based on whether productId is present
+                await fetchApi(`/service-records/${activeServiceRecordId}/items`, 'POST', newItem);
+
+                const successMessage = isManualProduct
+                    ? 'Manuel ürün başarıyla eklendi (stok etkilenmedi).'
+                    : (itemType === 'Ürün' ? 'Ürün başarıyla eklendi ve stok güncellendi.' : 'Hizmet başarıyla eklendi.');
+                showGlobalError(successMessage, true);
+
+                resetServiceItemForm();
+                loadActiveServiceRecordForEditing();
+
+            } catch (error) {
+                // fetchApi displays the error (e.g., stock insufficient if productId was sent)
+            }
+        }
+
+        function displayCurrentServiceItems(items = []) {
+              const serviceTableBody = document.getElementById('servicesTable-1')?.querySelector('tbody'); if(!serviceTableBody) return; serviceTableBody.innerHTML = '';
+             if (!items || items.length === 0) { serviceTableBody.innerHTML = '<tr><td colspan="6">Bu servis kaydına henüz ürün/hizmet eklenmedi.</td></tr>'; calculateServiceTotals([]); return; }
+             const isClosed = !(currentServiceData && currentServiceData.status === 'OPEN');
+             items.forEach(item => { const row = serviceTableBody.insertRow(); row.insertCell(0).textContent = item.description; row.insertCell(1).textContent = formatCurrency(item.unitPrice); row.insertCell(2).textContent = item.quantity; row.insertCell(3).textContent = formatCurrency(item.total); row.insertCell(4).textContent = item.type; const actionsCell = row.insertCell(5); actionsCell.classList.add('action-buttons'); if (!isClosed) { const deleteButton = document.createElement('button'); deleteButton.textContent = 'Sil'; deleteButton.className = 'secondary'; deleteButton.onclick = () => removeServiceItem(item.id); actionsCell.appendChild(deleteButton); } else { actionsCell.textContent = '-'; } });
+             calculateServiceTotals(items); document.getElementById('finalizeServiceButton').disabled = isClosed || items.length === 0;
+        }
+        async function removeServiceItem(itemId) {
+            if (!activeServiceRecordId) { showGlobalError('Aktif servis kaydı bulunamadı.'); return; } if (!currentServiceData || currentServiceData.status !== 'OPEN') { showGlobalError('Sadece "Açık" durumdaki kayıtların öğeleri silinebilir.'); return; }
+            if (!confirm(`Bu ürün/hizmeti (#${itemId}) servis kaydından silmek istediğinizden emin misiniz? Eğer bu stoktan düşülmüş bir ürün ise, stok iade edilecektir.`)) return; // Adjusted confirm message slightly
+            try { await fetchApi(`/service-records/${activeServiceRecordId}/items/${itemId}`, 'DELETE'); showGlobalError('Ürün/Hizmet başarıyla silindi.', true); loadActiveServiceRecordForEditing(); } catch (error) { }
+        }
+        function calculateServiceTotals(items = []) {
+             const subtotal = items.reduce((sum, item) => sum + (item.total || 0), 0); const vatPercentInput = document.getElementById('vatPercent-1'); const vatPercent = vatPercentInput ? (parseFloat(vatPercentInput.value) || 0) : (currentServiceData?.vatPercent || 0); const vatAmount = subtotal * (vatPercent / 100); const grandTotal = subtotal + vatAmount; const subtotalEl = document.getElementById('subtotal-1'); const vatAmountEl = document.getElementById('vatAmount-1'); const grandTotalEl = document.getElementById('grandTotal-1'); if (subtotalEl) subtotalEl.textContent = formatCurrency(subtotal); if (vatAmountEl) vatAmountEl.textContent = formatCurrency(vatAmount); if (grandTotalEl) grandTotalEl.textContent = formatCurrency(grandTotal);
+        }
+        async function finalizeServiceRecord() {
+             if (!activeServiceRecordId) { showGlobalError('Tamamlanacak aktif servis kaydı seçili değil.'); return; } if (!currentServiceData || currentServiceData.status !== 'OPEN') { showGlobalError('Sadece "Açık" durumdaki kayıtlar tamamlanabilir.'); return; } if (!currentServiceData.items || currentServiceData.items.length === 0) { showGlobalError('Tamamlamadan önce en az bir ürün veya hizmet eklemelisiniz.'); return; }
+             const vatPercentInput = document.getElementById('vatPercent-1'); if (!vatPercentInput) return; const vatPercent = parseFloat(vatPercentInput.value); if (isNaN(vatPercent) || vatPercent < 0) { showGlobalError('Lütfen geçerli bir KDV oranı girin (0 veya daha büyük).'); vatPercentInput.focus(); return; }
+             if (!confirm("Servis Kaydını Bitirmak istediğinizden emin misiniz? Bu işlemden sonra kayıt düzenlenemez ve müşterinin cari hesabına işlenir (eğer tutar varsa).")) return;
+             try { await fetchApi(`/service-records/${activeServiceRecordId}`, 'PUT', { status: 'COMPLETED', vatPercent: vatPercent }); showGlobalError(`Servis kaydı #${activeServiceRecordId} başarıyla tamamlandı.`, true); loadActiveServiceRecordForEditing(); if (document.getElementById('content-3').classList.contains('active')) displayServiceRecords(currentServicePage); } catch (error) { }
+        }
+        async function updateServiceRecordDetailsOnly() {
+            if (!activeServiceRecordId || !currentServiceData) { showGlobalError('Güncellenecek aktif kayıt yok.'); return; } if (currentServiceData.status !== 'OPEN') { showGlobalError('Sadece "Açık" durumdaki kayıtların detayları güncellenebilir.'); return; } document.getElementById('editRecordError').textContent = '';
+            const plateInput = document.getElementById('edit-plate-1'); const plate = plateInput.value.trim().toUpperCase(); const kmInput = document.getElementById('edit-km-1'); const km = kmInput.value ? parseInt(kmInput.value) : null; const complaint = document.getElementById('edit-complaint-1').value.trim();
+             if (km !== null && (isNaN(km) || km < 0)) { showGlobalError('Geçerli bir kilometre girin veya boş bırakın.'); kmInput.focus(); return; } if (plate && plate.length > 15) { showGlobalError('Plaka çok uzun görünüyor.'); plateInput.focus(); return; }
+            try { const updateData = { plate, km, complaint }; await fetchApi(`/service-records/${activeServiceRecordId}`, 'PUT', updateData); showGlobalError('Servis kaydı üst bilgileri başarıyla güncellendi.', true); loadActiveServiceRecordForEditing(); } catch (error) { document.getElementById('editRecordError').textContent = `Detay güncellenirken hata: ${error.message}`; }
+        }
+
+        // --- Page 2: Yeni Müşteri Ekle / Düzenle ---
+        function resetCustomerForm() { const form = document.getElementById('addCustomerForm'); if (form) form.reset(); const customerIdInput = document.getElementById('customerId-2'); if (customerIdInput) customerIdInput.value = ''; const saveButton = document.getElementById('saveCustomerBtn-2'); if (saveButton) saveButton.textContent = 'Müşteriyi Kaydet'; const formTitle = document.getElementById('customerFormTitle'); if (formTitle) formTitle.textContent = 'Yeni Müşteri Ekle'; }
+        async function saveCustomer(event) {
+            if(event) event.preventDefault(); const customerId = document.getElementById('customerId-2').value; const isEditing = customerId !== '';
+            const customerData = { firstName: document.getElementById('firstName-2').value.trim(), lastName: document.getElementById('lastName-2').value.trim(), phone: document.getElementById('phone-2').value.trim(), district: document.getElementById('district-2').value.trim(), address: document.getElementById('address-2').value.trim(), company: document.getElementById('company-2').value.trim(), taxNo: document.getElementById('taxNo-2').value.trim(), taxOffice: document.getElementById('taxOffice-2').value.trim(), isActive: true };
+            if (!customerData.firstName || !customerData.lastName || !customerData.phone) { showGlobalError("İsim, Soyisim ve Telefon alanları zorunludur."); return; }
+            try { if (isEditing) { await fetchApi(`/customers/${customerId}`, 'PUT', customerData); showGlobalError(`Müşteri "${customerData.firstName} ${customerData.lastName}" güncellendi.`, true); resetCustomerForm(); showContent('content-4'); } else { const result = await fetchApi('/customers', 'POST', customerData); showGlobalError(`Müşteri "${customerData.firstName} ${customerData.lastName}" eklendi (ID: ${result.id}).`, true); resetCustomerForm(); } } catch (error) { }
+        }
+
+        // --- Page 3: Kayıt Arşivi ---
+        let currentServicePage = 1; const serviceLimit = 10;
+        async function displayServiceRecords(page = 1) {
+            currentServicePage = page; const tbody = document.getElementById('serviceRecordsTable-3')?.querySelector('tbody'); const paginationDiv = document.getElementById('pagination-controls-3'); if(!tbody || !paginationDiv) return; tbody.innerHTML = `<tr><td colspan="8">Kayıtlar yükleniyor...</td></tr>`; paginationDiv.innerHTML = '';
+            const customerName = document.getElementById('filterCustomerName-3').value; const plate = document.getElementById('filterPlate-3').value; const status = document.getElementById('filterStatus-3').value; const startDate = document.getElementById('filterStartDate-3').value; const endDate = document.getElementById('filterEndDate-3').value;
+             const params = new URLSearchParams({ page: page, limit: serviceLimit }); if (customerName) params.append('customerName', customerName); if (plate) params.append('plate', plate); if (status) params.append('status', status); if (startDate) params.append('startDate', startDate); if (endDate) params.append('endDate', endDate);
+            try {
+                const result = await fetchApi(`/service-records?${params.toString()}`); const records = result.data || []; const pagination = result.pagination; tbody.innerHTML = '';
+                if (!records || records.length === 0) { tbody.innerHTML = `<tr><td colspan="8">Filtreye uygun kayıt bulunamadı.</td></tr>`; if (pagination) renderPagination(paginationDiv, pagination, displayServiceRecords); return; }
+                records.forEach(record => { const row = tbody.insertRow(); const customerDisplay = record.customerName_snapshot || (record.firstName && record.lastName ? `${record.firstName} ${record.lastName}` : 'Bilinmiyor'); row.insertCell(0).textContent = record.id; row.insertCell(1).textContent = customerDisplay; row.insertCell(2).textContent = formatDateTime(record.date || record.created_at); row.insertCell(3).textContent = record.plate || '-'; row.insertCell(4).textContent = formatCurrency(record.grandTotal || 0); const statusCell = row.insertCell(5); statusCell.textContent = record.status; statusCell.style.fontWeight = 'bold'; if (record.status === 'COMPLETED') statusCell.style.color = 'var(--primary-color)'; else if (record.status === 'CANCELLED') statusCell.style.color = 'var(--secondary-color)'; else if (record.status === 'OPEN') statusCell.style.color = 'var(--info-color)'; const invoiceCell = row.insertCell(6); if (record.status === 'COMPLETED') { if (record.invoice_id && record.invoice_number) { const viewInvoiceButton = document.createElement('button'); viewInvoiceButton.textContent = `${record.invoice_number}`; viewInvoiceButton.className = 'info'; viewInvoiceButton.style.fontSize = 'inherit'; viewInvoiceButton.style.padding = '3px 8px'; viewInvoiceButton.title = `Faturayı Görüntüle (${record.invoice_number})`; viewInvoiceButton.onclick = () => viewInvoice(record.invoice_id); invoiceCell.appendChild(viewInvoiceButton); } else { const createInvoiceButton = document.createElement('button'); createInvoiceButton.textContent = 'Fatura Oluştur'; createInvoiceButton.className = 'primary'; createInvoiceButton.onclick = () => createInvoice(record.id); invoiceCell.appendChild(createInvoiceButton); } } else { invoiceCell.textContent = '-'; } const actionsCell = row.insertCell(7); actionsCell.classList.add('action-buttons'); const viewButton = document.createElement('button'); viewButton.textContent = 'Görüntüle'; viewButton.className = 'info'; viewButton.onclick = () => viewServiceRecord(record.id); actionsCell.appendChild(viewButton); if (record.status === 'OPEN') { const editButton = document.createElement('button'); editButton.textContent = 'Düzenle'; editButton.className = 'warning'; editButton.onclick = () => editServiceRecord(record.id); actionsCell.appendChild(editButton); } const deleteButton = document.createElement('button'); deleteButton.textContent = 'Sil'; deleteButton.className = 'secondary'; deleteButton.onclick = () => deleteServiceRecord(record.id); actionsCell.appendChild(deleteButton); });
+                  if (pagination) renderPagination(paginationDiv, pagination, displayServiceRecords);
+            } catch (error) { tbody.innerHTML = `<tr><td colspan="8">Kayıtlar yüklenirken bir hata oluştu.</td></tr>`; }
+        }
+        function renderPagination(container, paginationData, pageClickCallback) {
+            container.innerHTML = ''; if (!paginationData || typeof paginationData.currentPage !== 'number' || typeof paginationData.totalPages !== 'number' || paginationData.totalPages <= 1) return; const { currentPage, totalPages } = paginationData; const prevButton = document.createElement('button'); prevButton.textContent = '<< Önceki'; prevButton.disabled = currentPage === 1; prevButton.onclick = () => pageClickCallback(currentPage - 1); prevButton.classList.add('info'); const pageInfo = document.createElement('span'); pageInfo.textContent = ` Sayfa ${currentPage} / ${totalPages} `; pageInfo.style.margin = "0 10px"; pageInfo.style.fontSize = "var(--font-size-small)"; pageInfo.style.color = "var(--text-color)"; pageInfo.style.verticalAlign = "middle"; const nextButton = document.createElement('button'); nextButton.textContent = 'Sonraki >>'; nextButton.disabled = currentPage === totalPages; nextButton.onclick = () => pageClickCallback(currentPage + 1); nextButton.classList.add('info'); container.appendChild(prevButton); container.appendChild(pageInfo); container.appendChild(nextButton);
+        }
+        async function viewServiceRecord(recordId) {
+            try {
+                const record = await fetchApi(`/service-records/${recordId}`); if (!record) { showGlobalError("Kayıt detayları bulunamadı."); return; }
+                 let modalContent = ` <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px 20px; margin-bottom: var(--base-padding);"> <p><strong>ID:</strong> ${record.id}</p> <p><strong>Müşteri:</strong> ${record.customerName_snapshot || 'Bilinmiyor'} ${record.customer_id ? `(ID: ${record.customer_id})` : ''}</p> <p><strong>Kayıt Tarihi:</strong> ${formatDateTime(record.date || record.created_at)}</p> <p><strong>Plaka:</strong> ${record.plate || '-'}</p> <p><strong>KM:</strong> ${record.km || '-'}</p> <p><strong>Durum:</strong> ${record.status}</p> </div> <div class="form-group"> <label style="font-weight: bold;">Şikayet/Talep:</label> <p style="background: #f8f9fa; padding: 8px; border-radius: 4px; min-height: 40px;">${record.complaint || '-'}</p> </div> <hr> <h4>Eklenen Ürünler/Hizmetler</h4> `;
+                 if (record.items && record.items.length > 0) { modalContent += `<div class="table-wrapper" style="margin-bottom: 0;"><table style="width:100%; font-size: 0.9em;"><thead><tr><th>Açıklama</th><th>Birim Fiyat</th><th>Adet</th><th>Toplam</th><th>Tür</th></tr></thead><tbody>`; record.items.forEach(item => { modalContent += `<tr> <td>${item.description}</td> <td>${formatCurrency(item.unitPrice)}</td> <td>${item.quantity}</td> <td>${formatCurrency(item.total)}</td> <td>${item.type}</td> </tr>`; }); modalContent += `</tbody></table></div>`; } else { modalContent += "<p>Bu kayda ait ürün/hizmet bulunmamaktadır.</p>"; }
+                 modalContent += `<hr> <div style="text-align:right; line-height: 1.8;"> <p><strong>Ara Toplam:</strong> ${formatCurrency(record.subtotal || 0)}</p> <p><strong>KDV (%${record.vatPercent || 0}):</strong> ${formatCurrency(record.vatAmount || 0)}</p> <p style="font-weight:bold; font-size: 1.15em;"><strong>Genel Toplam:</strong> ${formatCurrency(record.grandTotal || 0)}</p> </div> `;
+                 showModal(`Servis Kaydı Detayı #${record.id}`, modalContent);
+            } catch (error) { }
+        }
+        function editServiceRecord(recordId) { activeServiceRecordId = recordId; currentServiceData = null; showContent('content-1-edit'); }
+        async function deleteServiceRecord(recordId) {
+            if (!confirm(`Servis kaydını #${recordId} kalıcı olarak silmek istediğinizden emin misiniz?\nBu işlem geri alınamaz! İlişkili ürün/hizmet detayları da silinir ve varsa stok iadesi yapılır, müşteri cari hareketi silinmez (manuel düzeltme gerekebilir). İlgili fatura da silinir (varsa)!`)) return;
+            try {
+                await fetchApi(`/service-records/${recordId}`, 'DELETE'); showGlobalError(`Servis kaydı #${recordId} başarıyla silindi.`, true);
+                if (activeServiceRecordId === recordId) { activeServiceRecordId = null; currentServiceData = null; if (document.getElementById('content-1-edit').classList.contains('active')) { resetServiceEditPage(); document.getElementById('editServiceRecordInfo').textContent = 'Az önce silinen kayıt düzenleniyordu. Lütfen başka bir kayıt seçin veya yeni kayıt başlatın.'; } } if (document.getElementById('content-3').classList.contains('active')) displayServiceRecords(currentServicePage);
+            } catch (error) { }
+        }
+
+        // --- Fatura İşlemleri ---
+        async function createInvoice(recordId) {
+             if (!confirm(`Servis kaydı #${recordId} için fatura oluşturmak istediğinizden emin misiniz?\nBu işlem, kayıt tamamlandıysa ve fatura henüz yoksa gerçekleştirilebilir.`)) return;
+            try { const result = await fetchApi(`/service-records/${recordId}/invoice`, 'POST'); showGlobalError(`Fatura #${result.invoiceNumber} (ID: ${result.invoiceId}) başarıyla oluşturuldu.`, true, 7000); if (document.getElementById('content-3').classList.contains('active')) displayServiceRecords(currentServicePage); } catch (error) { if(error.cause?.invoiceId) { showGlobalError(`${error.message} Faturayı görüntülemek için tıklayın:`, false, 10000); if (document.getElementById('content-3').classList.contains('active')) displayServiceRecords(currentServicePage); } }
+        }
+        async function viewInvoice(invoiceId) {
+            try {
+                const invoice = await fetchApi(`/invoices/${invoiceId}`); if (!invoice) { showGlobalError("Fatura detayları bulunamadı."); return; } const customer = invoice.customer_details_snapshot || {};
+                 let modalContent = ` <div class="invoice-header"> <div class="left-info"> <h3>FATURA</h3> <p><strong>Fatura No:</strong> ${invoice.invoice_number}</p> <p><strong>Fatura Tarihi:</strong> ${formatDate(invoice.invoice_date)}</p> <p><strong>Durum:</strong> ${invoice.status}</p> ${invoice.due_date ? `<p><strong>Vade Tarihi:</strong> ${formatDate(invoice.due_date)}</p>` : ''} ${invoice.payment_date ? `<p><strong>Ödeme Tarihi:</strong> ${formatDate(invoice.payment_date)}</p>` : ''} </div> <div class="right-info"> <h3>${businessName || 'İşletme Adı'}</h3> <p>Servis Kayıt No: ${invoice.service_record_id}</p> <p>Servis Tarihi: ${formatDateTime(invoice.service_date)}</p> <p>Plaka: ${invoice.service_plate || '-'}</p> </div> </div> <div class="invoice-customer-details"> <h4>Müşteri Bilgileri</h4> <p><strong>Ad Soyad:</strong> ${customer.firstName || ''} ${customer.lastName || ''}</p> <p><strong>Firma:</strong> ${customer.company || '-'}</p> <p><strong>Adres:</strong> ${customer.address || ''} ${customer.district || ''}</p> <p><strong>Vergi Dairesi:</strong> ${customer.taxOffice || '-'}</p> <p><strong>Vergi No:</strong> ${customer.taxNo || '-'}</p> </div> <h4>Ürünler / Hizmetler</h4> <div class="table-wrapper" style="margin-bottom: 0;"> <table class="invoice-items-table" style="width:100%; font-size: 0.9em;"> <thead> <tr><th>Açıklama</th><th>Birim Fiyat</th><th>Adet</th><th>Toplam</th><th>Tür</th></tr> </thead> <tbody>`;
+                 if (invoice.items && invoice.items.length > 0) { invoice.items.forEach(item => { modalContent += `<tr> <td>${item.description}</td> <td>${formatCurrency(item.unitPrice)}</td> <td>${item.quantity}</td> <td>${formatCurrency(item.total)}</td> <td>${item.type}</td> </tr>`; }); } else { modalContent += `<tr><td colspan="5">Faturaya ait kalem bulunamadı.</td></tr>`; }
+                 modalContent += `</tbody></table></div> <div class="invoice-totals"> <p><strong>Ara Toplam:</strong> ${formatCurrency(invoice.subtotal || 0)}</p> <p><strong>KDV (%${invoice.vat_percent || 0}):</strong> ${formatCurrency(invoice.vat_amount || 0)}</p> <p class="grand-total"><strong>Genel Toplam:</strong> ${formatCurrency(invoice.grand_total || 0)}</p> </div> `;
+                 if (invoice.notes) modalContent += `<div class="invoice-notes"><p><strong>Notlar:</strong> ${invoice.notes}</p></div>`;
+                 showModal(`Fatura Detayı: ${invoice.invoice_number}`, modalContent);
+            } catch (error) { }
+        }
+
+        // --- Page 4: Müşteri Listesi ---
+        async function displayCustomers() {
+            const tbody = document.getElementById('customersTable-4')?.querySelector('tbody'); if(!tbody) return; tbody.innerHTML = '<tr><td colspan="6">Müşteriler yükleniyor...</td></tr>'; const searchTerm = document.getElementById('customerSearch-4').value; const statusFilter = document.getElementById('customerStatusFilter-4').value; const params = new URLSearchParams(); if (searchTerm) params.append('search', searchTerm); if (statusFilter === 'active') params.append('isActive', 'true'); if (statusFilter === 'inactive') params.append('isActive', 'false');
+            try {
+                const result = await fetchApi(`/customers?${params.toString()}`); const customers = Array.isArray(result) ? result : (result?.data || []); tbody.innerHTML = '';
+                if (!customers || customers.length === 0) { tbody.innerHTML = '<tr><td colspan="6">Müşteri bulunamadı.</td></tr>'; return; }
+                customers.forEach(customer => { const row = tbody.insertRow(); row.insertCell(0).textContent = customer.id; row.insertCell(1).textContent = `${customer.firstName} ${customer.lastName}`; row.insertCell(2).textContent = customer.phone || '-'; row.insertCell(3).textContent = customer.company || '-'; const statusCell = row.insertCell(4); statusCell.innerHTML = customer.isActive ? `<span style="color:var(--primary-color); font-weight: bold;">Aktif</span>` : `<span style="color:var(--secondary-color); font-weight: bold;">Pasif</span>`; const actionsCell = row.insertCell(5); actionsCell.classList.add('action-buttons'); const editButton = document.createElement('button'); editButton.textContent = 'Düzenle'; editButton.className = 'warning'; editButton.onclick = () => editCustomer(customer.id); actionsCell.appendChild(editButton); const toggleButton = document.createElement('button'); toggleButton.textContent = customer.isActive ? 'Pasif Yap' : 'Aktif Yap'; toggleButton.className = customer.isActive ? 'secondary' : 'info'; toggleButton.onclick = () => toggleCustomerActiveState(customer.id, !customer.isActive); actionsCell.appendChild(toggleButton); const accountButton = document.createElement('button'); accountButton.textContent = 'Cari Hesap'; accountButton.className = 'info'; accountButton.onclick = () => { showContent('content-9'); setTimeout(() => { const customerSelect = document.getElementById('customerSelect-9'); if (customerSelect) { customerSelect.value = customer.id; updateAccountDetailsDisplay(); } }, 100); }; actionsCell.appendChild(accountButton); });
+            } catch (error) { tbody.innerHTML = '<tr><td colspan="6">Müşteriler yüklenirken bir hata oluştu.</td></tr>'; }
+        }
+        async function editCustomer(id) {
+            resetCustomerForm(); try { const customer = await fetchApi(`/customers/${id}`); if (!customer) { showGlobalError("Müşteri bilgileri alınamadı."); return; } document.getElementById('customerId-2').value = customer.id; document.getElementById('firstName-2').value = customer.firstName; document.getElementById('lastName-2').value = customer.lastName; document.getElementById('phone-2').value = customer.phone || ''; document.getElementById('district-2').value = customer.district || ''; document.getElementById('address-2').value = customer.address || ''; document.getElementById('company-2').value = customer.company || ''; document.getElementById('taxNo-2').value = customer.taxNo || ''; document.getElementById('taxOffice-2').value = customer.taxOffice || ''; document.getElementById('saveCustomerBtn-2').textContent = 'Değişiklikleri Kaydet'; document.getElementById('customerFormTitle').textContent = 'Müşteriyi Düzenle'; showContent('content-2'); } catch (error) { }
+        }
+        async function toggleCustomerActiveState(id, newState) {
+            const actionText = newState ? "aktif" : "pasif"; if (confirm(`Müşteriyi ${actionText} yapmak istediğinizden emin misiniz?`)) { try { const customer = await fetchApi(`/customers/${id}`); if (!customer) throw new Error("Müşteri bulunamadı."); const updatedCustomerData = { ...customer, isActive: newState }; await fetchApi(`/customers/${id}`, 'PUT', updatedCustomerData); showGlobalError(`Müşteri durumu ${actionText} olarak güncellendi.`, true); displayCustomers(); } catch (error) { } }
+        }
+        async function deleteCustomer(id) {
+            try { const customer = await fetchApi(`/customers/${id}`); if (!customer) { showGlobalError("Silinecek müşteri bulunamadı."); return; } if (!confirm(`!!! DİKKAT: KALICI SİLME İŞLEMİ !!!\n\nMüşteriyi (${customer.firstName} ${customer.lastName} - ID: ${id}) ve ilişkili tüm CARİ HESAP bilgilerini kalıcı olarak silmek istediğinizden emin misiniz?\n\nBu işlem geri alınamaz! Servis kayıtları kalır ancak müşteri bağlantısı kopar.\n\nSilmek yerine müşteriyi PASİF yapmanız şiddetle önerilir.`)) return; const lastNamePrompt = prompt(`Silme işlemini onaylamak için müşterinin soyadını ("${customer.lastName}") buraya yazın:`); if (lastNamePrompt === null || lastNamePrompt.trim().toLowerCase() !== customer.lastName.toLowerCase()) { showGlobalError("Soyadı eşleşmedi veya işlem iptal edildi. Silme yapılmadı."); return; } await fetchApi(`/customers/${id}`, 'DELETE'); showGlobalError('Müşteri ve ilişkili cari hesap başarıyla kalıcı olarak silindi.', true); displayCustomers(); } catch (error) { }
+        }
+
+        // --- Page 5 & 6: Ürün Grupları ---
+        async function addProductGroup() {
+             const groupNameInput = document.getElementById('productGroupName-5'); const name = groupNameInput.value.trim(); if (!name) { showGlobalError("Lütfen bir grup adı girin."); groupNameInput.focus(); return; } try { await fetchApi('/product-groups', 'POST', { name }); showGlobalError(`"${name}" grubu başarıyla eklendi.`, true); groupNameInput.value = ''; updateProductGroupListDisplay(); if (document.getElementById('content-6').classList.contains('active')) updateProductGroupTableDisplay(); updateStockEntryPage(); } catch (error) { }
+        }
+        async function updateProductGroupListDisplay() {
+            const listDiv = document.getElementById('productGroupList-5'); if(!listDiv) return; listDiv.innerHTML = '<p>Gruplar yükleniyor...</p>'; try { const groups = await fetchApi('/product-groups'); listDiv.innerHTML = ''; if (!groups || groups.length === 0) { listDiv.innerHTML = '<p>Henüz ürün grubu eklenmemiş.</p>'; return; } groups.forEach(group => { const p = document.createElement('p'); const nameSpan = document.createElement('span'); nameSpan.textContent = `${group.name} (ID: ${group.id})`; nameSpan.style.fontWeight = '500'; p.appendChild(nameSpan); const buttonsDiv = document.createElement('div'); buttonsDiv.classList.add('action-buttons'); buttonsDiv.style.marginLeft = 'auto'; const editButton = document.createElement('button'); editButton.textContent = 'Düzenle'; editButton.className = 'warning'; editButton.onclick = () => editProductGroup(group.id, group.name); buttonsDiv.appendChild(editButton); const deleteButton = document.createElement('button'); deleteButton.textContent = 'Sil'; deleteButton.className = 'secondary'; deleteButton.onclick = () => deleteProductGroup(group.id, group.name); buttonsDiv.appendChild(deleteButton); p.appendChild(buttonsDiv); listDiv.appendChild(p); }); } catch (error) { listDiv.innerHTML = '<p style="color:red">Gruplar yüklenirken hata oluştu.</p>'; }
+        }
+        async function updateProductGroupTableDisplay() {
+            const tbody = document.getElementById('productGroupTable-6')?.querySelector('tbody'); if (!tbody) return; tbody.innerHTML = '<tr><td colspan="4">Gruplar yükleniyor...</td></tr>'; const searchTerm = document.getElementById('groupSearch-6').value; const params = new URLSearchParams(); if (searchTerm) params.append('search', searchTerm); try { const groups = await fetchApi(`/product-groups?${params.toString()}`); tbody.innerHTML = ''; if (!groups || groups.length === 0) { tbody.innerHTML = '<tr><td colspan="4">Ürün grubu bulunamadı.</td></tr>'; return; } groups.forEach(group => { const row = tbody.insertRow(); row.insertCell(0).textContent = group.id; row.insertCell(1).textContent = group.name; row.insertCell(2).textContent = formatDateTime(group.created_at); const actionsCell = row.insertCell(3); actionsCell.classList.add('action-buttons'); const editButton = document.createElement('button'); editButton.textContent = 'Düzenle'; editButton.className = 'warning'; editButton.onclick = () => editProductGroup(group.id, group.name); actionsCell.appendChild(editButton); const deleteButton = document.createElement('button'); deleteButton.textContent = 'Sil'; deleteButton.className = 'secondary'; deleteButton.onclick = () => deleteProductGroup(group.id, group.name); actionsCell.appendChild(deleteButton); }); } catch (error) { tbody.innerHTML = '<tr><td colspan="4" style="color:red">Gruplar yüklenirken hata oluştu.</td></tr>'; }
+        }
+        async function editProductGroup(id, currentName) {
+            const newName = prompt('Yeni grup adı:', currentName); if (newName && newName.trim() && newName.trim() !== currentName) { try { await fetchApi(`/product-groups/${id}`, 'PUT', { name: newName.trim() }); showGlobalError('Grup adı başarıyla güncellendi.', true); updateProductGroupListDisplay(); updateProductGroupTableDisplay(); updateStockEntryPage(); } catch (error) { } } else if (newName !== null) showGlobalError("Geçerli bir yeni grup adı girilmedi veya isim değiştirilmedi.");
+        }
+        async function deleteProductGroup(id, name) { if (confirm(`Emin misiniz? "${name}" grubunu silmek istiyor musunuz?\nUYARI: Bu gruba ait ürünlerin grup bilgisi kaldırılacaktır (ürünler silinmez).`)) { try { await fetchApi(`/product-groups/${id}`, 'DELETE'); showGlobalError(`"${name}" grubu başarıyla silindi.`, true); updateProductGroupListDisplay(); updateProductGroupTableDisplay(); updateStockEntryPage(); } catch (error) { } } }
+
+        // --- Page 7: Stok Girişi / Ürün Yönetimi ---
+        async function updateStockEntryPage() { await populateDropdown('productGroup-7', '/product-groups', 'id', 'name', 'Grup Seçin (*)'); await populateDropdown('supplier-7', '/suppliers', 'id', 'name', 'Tedarikçi Seç (Opsiyonel)'); updateProductStockListDisplay(); const errorDiv = document.getElementById('stockAddError'); if(errorDiv) errorDiv.textContent = ''; }
+        async function addStock() {
+            const productNameInput = document.getElementById('productName-7'); const productName = productNameInput.value.trim(); const groupId = document.getElementById('productGroup-7').value; const quantityInput = document.getElementById('quantity-7'); const quantity = parseInt(quantityInput.value); const unitCostInput = document.getElementById('unitCost-7'); const unitCost = unitCostInput.value ? parseFloat(unitCostInput.value) : null; const supplierId = document.getElementById('supplier-7').value || null; const invoiceRef = document.getElementById('invoiceRef-7').value.trim() || null; const errorDiv = document.getElementById('stockAddError'); if(errorDiv) errorDiv.textContent = '';
+            if (!productName || !groupId || isNaN(quantity) || quantity <= 0) { if(errorDiv) errorDiv.textContent = '(*) işaretli alanlar (Ürün Adı, Grup, Miktar) doldurulmalıdır ve miktar pozitif olmalıdır.'; showGlobalError('Lütfen zorunlu alanları (* işaretli) doğru şekilde doldurun.'); return; } if (unitCost !== null && (isNaN(unitCost) || unitCost < 0)) { if(errorDiv) errorDiv.textContent = 'Alış fiyatı geçerli bir sayı (0 veya daha büyük) olmalı veya boş bırakılmalıdır.'; showGlobalError('Alış fiyatı geçerli bir sayı (0 veya daha büyük) olmalı veya boş bırakılmalıdır.'); return; }
+            try { const result = await fetchApi('/stock', 'POST', { productName, groupId, quantity, unitCost, supplierId, invoiceRef }); showGlobalError(result.message || 'Stok başarıyla eklendi/güncellendi.', true, 7000); document.getElementById('addStockForm')?.reset(); updateProductStockListDisplay(); updateStockExitPage(); if (document.getElementById('content-1-edit').classList.contains('active')) updateServiceRecordProductDropdown(); } catch(error) { if(errorDiv) errorDiv.textContent = `Stok eklenirken hata: ${error.message}`; }
+        }
+        async function updateProductStockListDisplay() {
+            const listDiv = document.getElementById('productStockList-7'); if(!listDiv) return; listDiv.innerHTML = '<p>Stok durumu yükleniyor...</p>'; const searchTerm = document.getElementById('stockSearchInput-7').value.toLowerCase();
+            try { const products = await fetchApi('/stock'); listDiv.innerHTML = ''; if (!products || products.length === 0) { listDiv.innerHTML = '<p>Stokta ürün bulunmamaktadır.</p>'; return; } let found = false; products.forEach(product => { const groupName = product.group_name || 'Grup Yok'; const matchesSearch = !searchTerm || product.name.toLowerCase().includes(searchTerm) || groupName.toLowerCase().includes(searchTerm); if (matchesSearch) { found = true; const p = document.createElement('p'); p.style.gap = "15px"; const nameSpan = document.createElement('span'); nameSpan.textContent = `Ürün: ${product.name}`; nameSpan.style.fontWeight = 'bold'; p.appendChild(nameSpan); const groupSpan = document.createElement('span'); groupSpan.textContent = `Grup: ${groupName}`; groupSpan.classList.add('stock-info'); p.appendChild(groupSpan); const stockSpan = document.createElement('span'); stockSpan.innerHTML = `Stok: <strong style="font-size: 1.1em; color:${(product.current_stock || 0) <= 0 ? 'var(--secondary-color)' : 'var(--primary-color)'}">${product.current_stock || 0}</strong> adet`; p.appendChild(stockSpan); if (product.last_unit_cost !== null && product.last_unit_cost !== undefined) { const costSpan = document.createElement('span'); costSpan.textContent = `Son Alış: ${formatCurrency(product.last_unit_cost)}`; costSpan.classList.add('stock-info'); p.appendChild(costSpan); } const updatedSpan = document.createElement('span'); updatedSpan.textContent = `Güncelleme: ${formatDateTime(product.updated_at)}`; updatedSpan.classList.add('stock-info'); p.appendChild(updatedSpan); listDiv.appendChild(p); } }); if (!found && searchTerm) listDiv.innerHTML = '<p>Arama kriterine uygun ürün bulunamadı.</p>'; } catch (error) { listDiv.innerHTML = '<p style="color:red">Stok durumu yüklenirken hata oluştu.</p>'; }
+        }
+
+        // --- Page 8: Stok Çıkışı (Manuel) ---
+        async function updateStockExitPage() { await populateDropdown('productSelect-8', '/stock', 'id', item => `${item.name} (Stok: ${item.current_stock || 0})`, 'Ürün Seç (*)'); document.getElementById('adjustStockForm')?.reset(); }
+        async function adjustStockManually() {
+             const productId = document.getElementById('productSelect-8').value; const quantityInput = document.getElementById('quantity-8'); const quantityChange = parseInt(quantityInput.value); const reasonInput = document.getElementById('reason-8'); const reason = reasonInput.value.trim();
+             if (!productId) { showGlobalError('Lütfen bir ürün seçin.'); document.getElementById('productSelect-8').focus(); return; } if (isNaN(quantityChange) || quantityChange === 0) { showGlobalError('Lütfen 0 olmayan geçerli bir ayarlama miktarı girin (çıkış için negatif, giriş için pozitif).'); quantityInput.focus(); return; } if (!reason) { showGlobalError('Lütfen stok ayarlama için bir neden belirtin.'); reasonInput.focus(); return; }
+              const selectedOption = document.getElementById('productSelect-8')?.options[document.getElementById('productSelect-8').selectedIndex]; let currentStock = NaN; if(selectedOption) { const match = selectedOption.text.match(/Stok: (-?\d+)/); currentStock = match ? parseInt(match[1]) : NaN; }
+              if (quantityChange < 0 && !isNaN(currentStock) && currentStock + quantityChange < 0) { if (!confirm(`Dikkat! Bu işlem (${quantityChange}) sonucunda ürünün stoğu (${currentStock}) negatife düşecek. Yine de devam etmek istiyor musunuz? (Önerilmez)`)) return; }
+              const confirmMsg = `Emin misiniz? Seçili üründen (${selectedOption?.text.split(' (')[0] || 'Bilinmeyen'}) ${Math.abs(quantityChange)} adet ${quantityChange < 0 ? 'çıkarılacak' : 'eklenecek'}. Neden: ${reason}`; if (!confirm(confirmMsg)) return;
+             try { await fetchApi('/stock/adjust', 'POST', { productId, quantityChange, reason }); showGlobalError('Stok başarıyla ayarlandı.', true); document.getElementById('adjustStockForm')?.reset(); updateStockExitPage(); updateProductStockListDisplay(); if (document.getElementById('content-1-edit').classList.contains('active')) updateServiceRecordProductDropdown(); } catch(error) { }
+        }
+
+        // --- Page 9 & 10: Cari Hesaplar (Müşteri) ---
+        async function updateAccountManagementPage() { await populateDropdown('customerSelect-9', '/customers', 'id', item => `${item.firstName} ${item.lastName} ${item.company ? '('+item.company+')' : ''}`, 'Müşteri Seç...', true, { includeBalance: true }); const detailsDiv = document.getElementById('accountDetails-9'); const transactionTbody = document.getElementById('transactionsTable-9')?.querySelector('tbody'); if (detailsDiv) detailsDiv.style.display = 'none'; if (transactionTbody) transactionTbody.innerHTML = '<tr><td colspan="5">Müşteri seçin.</td></tr>'; }
+         async function updateAccountSummaryPage() { updateAccountSummaryDisplay(); }
+        async function updateAccountDetailsDisplay() {
+            const customerId = document.getElementById('customerSelect-9').value; const detailsDiv = document.getElementById('accountDetails-9'); const transactionTbody = document.getElementById('transactionsTable-9')?.querySelector('tbody'); if (!detailsDiv || !transactionTbody) return;
+            if (!customerId) { detailsDiv.style.display = 'none'; transactionTbody.innerHTML = '<tr><td colspan="5">Müşteri seçin.</td></tr>'; return; }
+            detailsDiv.style.display = 'block'; transactionTbody.innerHTML = '<tr><td colspan="5">Hesap hareketleri yükleniyor...</td></tr>';
+            try {
+                const accountData = await fetchApi(`/accounts/${customerId}`); const balance = accountData.balance || 0; const transactions = accountData.transactions || []; const balanceSpan = document.getElementById('currentBalance-9'); if (balanceSpan) { balanceSpan.textContent = formatCurrency(balance); balanceSpan.style.color = balance < 0 ? 'var(--primary-color)' : (balance > 0 ? 'var(--secondary-color)' : 'var(--text-color)'); }
+                 transactionTbody.innerHTML = ''; if (transactions.length === 0) transactionTbody.innerHTML = '<tr><td colspan="5">Bu müşteriye ait hesap hareketi bulunmamaktadır.</td></tr>'; else { transactions.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)); transactions.forEach(tx => { const row = transactionTbody.insertRow(); row.insertCell(0).textContent = formatDateTime(tx.timestamp); row.insertCell(1).textContent = tx.description; const amountCell = row.insertCell(2); amountCell.textContent = formatCurrency(tx.amount); amountCell.style.color = tx.amount < 0 ? 'var(--primary-color)' : (tx.amount > 0 ? 'var(--secondary-color)' : 'var(--text-color)'); const balanceCell = row.insertCell(3); balanceCell.textContent = formatCurrency(tx.new_balance); balanceCell.style.color = tx.new_balance < 0 ? 'var(--primary-color)' : (tx.new_balance > 0 ? 'var(--secondary-color)' : 'var(--text-color)'); row.insertCell(4).textContent = tx.related_service_record_id || '-'; }); } document.getElementById('addCustomerTxForm')?.reset();
+            } catch (error) { detailsDiv.style.display = 'none'; transactionTbody.innerHTML = '<tr><td colspan="5" style="color:red">Hesap detayları yüklenirken hata oluştu.</td></tr>'; }
+        }
+        async function addCustomerPayment() {
+            const customerId = document.getElementById('customerSelect-9').value; const amountInput = document.getElementById('transactionAmount-9'); const descriptionInput = document.getElementById('transactionDesc-9'); const amount = Math.abs(parseFloat(amountInput.value) || 0); const description = descriptionInput.value.trim();
+            if (!customerId) { showGlobalError('Lütfen bir müşteri seçin.'); return; } if (isNaN(amount) || amount <= 0) { showGlobalError('Lütfen geçerli bir pozitif tutar girin.'); amountInput.focus(); return; } if (!description) { showGlobalError('Lütfen bir açıklama girin.'); descriptionInput.focus(); return; }
+            if (!confirm(`Müşteriden ${formatCurrency(amount)} tahsilat yapıldığını onaylıyor musunuz?`)) return;
+            try { await fetchApi(`/accounts/${customerId}/transactions`, 'POST', { amount: -amount, description: description }); showGlobalError('Tahsilat başarıyla kaydedildi.', true); updateAccountDetailsDisplay(); if (document.getElementById('content-10').classList.contains('active')) updateAccountSummaryDisplay(); amountInput.value = ''; descriptionInput.value = ''; } catch (error) { }
+        }
+        async function addCustomerDebt() {
+            const customerId = document.getElementById('customerSelect-9').value; const amountInput = document.getElementById('transactionAmount-9'); const descriptionInput = document.getElementById('transactionDesc-9'); const amount = Math.abs(parseFloat(amountInput.value) || 0); const description = descriptionInput.value.trim();
+            if (!customerId) { showGlobalError('Lütfen bir müşteri seçin.'); return; } if (isNaN(amount) || amount <= 0) { showGlobalError('Lütfen geçerli bir pozitif tutar girin.'); amountInput.focus(); return; } if (!description) { showGlobalError('Lütfen bir açıklama girin.'); descriptionInput.focus(); return; }
+            if (!confirm(`Müşteriye ${formatCurrency(amount)} borç ekleneceğini onaylıyor musunuz?`)) return;
+            try { await fetchApi(`/accounts/${customerId}/transactions`, 'POST', { amount: amount, description: description }); showGlobalError('Borç başarıyla kaydedildi.', true); updateAccountDetailsDisplay(); if (document.getElementById('content-10').classList.contains('active')) updateAccountSummaryDisplay(); amountInput.value = ''; descriptionInput.value = ''; } catch (error) { }
+        }
+        async function updateAccountSummaryDisplay() {
+            const tbody = document.getElementById('accountSummaryTable-10')?.querySelector('tbody'); if(!tbody) return; tbody.innerHTML = '<tr><td colspan="6">Özetler yükleniyor...</td></tr>'; const searchTerm = document.getElementById('customerSearch-10').value.toLowerCase();
+            try { const customers = await fetchApi('/customers?includeBalance=true'); tbody.innerHTML = ''; if (!customers || customers.length === 0) { tbody.innerHTML = '<tr><td colspan="6">Müşteri bulunamadı.</td></tr>'; return; }
+                 const filteredCustomers = customers.filter(c => !searchTerm || `${c.firstName} ${c.lastName}`.toLowerCase().includes(searchTerm) || (c.company && c.company.toLowerCase().includes(searchTerm)) ).sort((a, b) => Math.abs(b.current_balance || 0) - Math.abs(a.current_balance || 0));
+                 filteredCustomers.forEach(customer => { const row = tbody.insertRow(); row.insertCell(0).textContent = customer.id; row.insertCell(1).textContent = `${customer.firstName} ${customer.lastName}`; row.insertCell(2).textContent = customer.company || '-'; const balanceCell = row.insertCell(3); const balance = customer.current_balance || 0; balanceCell.textContent = formatCurrency(balance); balanceCell.style.color = balance < 0 ? 'var(--primary-color)' : (balance > 0 ? 'var(--secondary-color)' : 'var(--text-color)'); row.insertCell(4).textContent = customer.lastTransactionDate ? formatDateTime(customer.lastTransactionDate) : '-'; const actionsCell = row.insertCell(5); actionsCell.classList.add('action-buttons'); const detailsButton = document.createElement('button'); detailsButton.textContent = 'Hesap Detayı'; detailsButton.className = 'info'; detailsButton.onclick = () => { showContent('content-9'); setTimeout(() => { const customerSelect = document.getElementById('customerSelect-9'); if (customerSelect) { customerSelect.value = customer.id; updateAccountDetailsDisplay(); } }, 100); }; actionsCell.appendChild(detailsButton); });
+            } catch (error) { tbody.innerHTML = '<tr><td colspan="6" style="color:red">Hesap özetleri yüklenirken hata oluştu.</td></tr>'; }
+        }
+
+        // --- Tedarikçi Yönetimi ---
+        function resetSupplierForm() { const form = document.getElementById('addSupplierForm'); if (form) form.reset(); const supplierIdInput = document.getElementById('supplierId-s1'); if (supplierIdInput) supplierIdInput.value = ''; const saveButton = document.getElementById('saveSupplierBtn-s1'); if (saveButton) saveButton.textContent = 'Tedarikçiyi Kaydet'; const formTitle = document.getElementById('supplierFormTitle'); if (formTitle) formTitle.textContent = 'Yeni Tedarikçi Ekle'; }
+        async function saveSupplier(event) {
+            if(event) event.preventDefault(); const supplierId = document.getElementById('supplierId-s1').value; const isEditing = supplierId !== '';
+            const supplierData = { name: document.getElementById('supplierName-s1').value.trim(), contact_person: document.getElementById('supplierContact-s1').value.trim(), phone: document.getElementById('supplierPhone-s1').value.trim(), email: document.getElementById('supplierEmail-s1').value.trim(), address: document.getElementById('supplierAddress-s1').value.trim(), taxNo: document.getElementById('supplierTaxNo-s1').value.trim(), taxOffice: document.getElementById('supplierTaxOffice-s1').value.trim(), };
+            if (!supplierData.name) { showGlobalError("Tedarikçi adı zorunludur."); return; }
+            try { if (isEditing) { await fetchApi(`/suppliers/${supplierId}`, 'PUT', supplierData); showGlobalError('Tedarikçi bilgileri başarıyla güncellendi.', true); resetSupplierForm(); showContent('content-supplier-2'); } else { const result = await fetchApi('/suppliers', 'POST', supplierData); showGlobalError(`Tedarikçi "${supplierData.name}" başarıyla eklendi (ID: ${result.id}).`, true); resetSupplierForm(); } updateStockEntryPage(); updateSupplierAccountPage(); } catch (error) { }
+        }
+        async function displaySuppliers() {
+            const tbody = document.getElementById('suppliersTable-s2')?.querySelector('tbody'); if(!tbody) return; tbody.innerHTML = '<tr><td colspan="5">Tedarikçiler yükleniyor...</td></tr>'; const searchTerm = document.getElementById('supplierSearch-s2').value; const params = new URLSearchParams(); if (searchTerm) params.append('search', searchTerm);
+            try { const result = await fetchApi(`/suppliers?${params.toString()}`); const suppliers = Array.isArray(result) ? result : (result?.data || []); tbody.innerHTML = ''; if (!suppliers || suppliers.length === 0) { tbody.innerHTML = '<tr><td colspan="5">Tedarikçi bulunamadı.</td></tr>'; return; } suppliers.forEach(supplier => { const row = tbody.insertRow(); row.insertCell(0).textContent = supplier.id; row.insertCell(1).textContent = supplier.name; row.insertCell(2).textContent = supplier.contact_person || '-'; row.insertCell(3).textContent = supplier.phone || '-'; const actionsCell = row.insertCell(4); actionsCell.classList.add('action-buttons'); const editButton = document.createElement('button'); editButton.textContent = 'Düzenle'; editButton.className = 'warning'; editButton.onclick = () => editSupplier(supplier.id); actionsCell.appendChild(editButton); const accountButton = document.createElement('button'); accountButton.textContent = 'Hesap Hareketleri'; accountButton.className = 'info'; accountButton.onclick = () => { showContent('content-supplier-3'); setTimeout(() => { const supplierSelect = document.getElementById('supplierSelect-s3'); if (supplierSelect) { supplierSelect.value = supplier.id; updateSupplierAccountDetails(); } }, 100); }; actionsCell.appendChild(accountButton); const deleteButton = document.createElement('button'); deleteButton.textContent = 'Sil'; deleteButton.className = 'secondary'; deleteButton.onclick = () => deleteSupplier(supplier.id, supplier.name); actionsCell.appendChild(deleteButton); }); } catch (error) { tbody.innerHTML = '<tr><td colspan="5" style="color:red">Tedarikçiler yüklenirken hata oluştu.</td></tr>'; }
+        }
+        async function editSupplier(id) {
+            resetSupplierForm(); try { const supplier = await fetchApi(`/suppliers/${id}`); if (!supplier) { showGlobalError("Tedarikçi bilgileri alınamadı."); return; } document.getElementById('supplierId-s1').value = supplier.id; document.getElementById('supplierName-s1').value = supplier.name; document.getElementById('supplierContact-s1').value = supplier.contact_person || ''; document.getElementById('supplierPhone-s1').value = supplier.phone || ''; document.getElementById('supplierEmail-s1').value = supplier.email || ''; document.getElementById('supplierAddress-s1').value = supplier.address || ''; document.getElementById('supplierTaxNo-s1').value = supplier.taxNo || ''; document.getElementById('supplierTaxOffice-s1').value = supplier.taxOffice || ''; document.getElementById('saveSupplierBtn-s1').textContent = 'Değişiklikleri Kaydet'; document.getElementById('supplierFormTitle').textContent = 'Tedarikçiyi Düzenle'; showContent('content-supplier-1'); } catch (error) { }
+        }
+        async function deleteSupplier(id, name) {
+            if (confirm(`!!! DİKKAT: KALICI SİLME !!!\n\nTedarikçiyi (${name} - ID: ${id}) ve ilişkili tüm hesap hareketlerini kalıcı olarak silmek istediğinizden emin misiniz?\n\nBu işlem geri alınamaz! Stok girişleri vb. ilişkili verilerde tedarikçi bağlantısı kopabilir.\n\nNot: Tedarikçinin cari bakiyesi 0 (sıfır) değilse silme işlemi başarısız olacaktır.`)) {
+                 const confirmName = prompt(`Silme işlemini onaylamak için tedarikçi adını ("${name}") yazın:`);
+                 if (confirmName === null || confirmName.trim().toLowerCase() !== name.toLowerCase()) {
+                     showGlobalError("İsim eşleşmedi veya işlem iptal edildi. Silme yapılmadı.");
+                     return;
+                 }
+                 try {
+                    await fetchApi(`/suppliers/${id}`, 'DELETE');
+                    showGlobalError('Tedarikçi başarıyla kalıcı olarak silindi.', true);
+                    displaySuppliers(); // Listeyi yenile
+                    updateStockEntryPage(); // Dropdown'ları yenile
+                    updateSupplierAccountPage(); // Hesap sayfasını yenile
+                } catch (error) { /* fetchApi hatayı gösterir */ }
+            }
+        }
+
+        // --- Tedarikçi Hesapları Sayfası ---
+        async function updateSupplierAccountPage() { await populateDropdown('supplierSelect-s3', '/suppliers', 'id', 'name', 'Tedarikçi Seç...', true, { includeBalance: true }); const detailsDiv = document.getElementById('supplierAccountDetails-s3'); const transactionTbody = document.getElementById('supplierTransactionsTable-s3')?.querySelector('tbody'); if (detailsDiv) detailsDiv.style.display = 'none'; if(transactionTbody) transactionTbody.innerHTML = '<tr><td colspan="5">Tedarikçi seçin.</td></tr>'; }
+        async function updateSupplierAccountDetails() {
+            const supplierId = document.getElementById('supplierSelect-s3').value; const detailsDiv = document.getElementById('supplierAccountDetails-s3'); const transactionTbody = document.getElementById('supplierTransactionsTable-s3')?.querySelector('tbody'); if (!detailsDiv || !transactionTbody) return; if (!supplierId) { detailsDiv.style.display = 'none'; transactionTbody.innerHTML = '<tr><td colspan="5">Tedarikçi seçin.</td></tr>'; return; } detailsDiv.style.display = 'block'; transactionTbody.innerHTML = '<tr><td colspan="5">Hesap hareketleri yükleniyor...</td></tr>';
+            try { const accountData = await fetchApi(`/suppliers/${supplierId}/account`); const balance = accountData.balance || 0; const transactions = accountData.transactions || []; const balanceSpan = document.getElementById('supplierBalance-s3'); if(balanceSpan) { balanceSpan.textContent = formatCurrency(balance); balanceSpan.style.color = balance > 0 ? 'var(--secondary-color)' : (balance < 0 ? 'var(--primary-color)' : 'var(--text-color)'); } transactionTbody.innerHTML = ''; if (transactions.length === 0) transactionTbody.innerHTML = '<tr><td colspan="5">Bu tedarikçiye ait hesap hareketi bulunmamaktadır.</td></tr>'; else { transactions.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)); transactions.forEach(tx => { const row = transactionTbody.insertRow(); row.insertCell(0).textContent = formatDateTime(tx.timestamp); row.insertCell(1).textContent = tx.description; const amountCell = row.insertCell(2); amountCell.textContent = formatCurrency(tx.amount); amountCell.style.color = tx.amount > 0 ? 'var(--secondary-color)' : (tx.amount < 0 ? 'var(--primary-color)' : 'var(--text-color)'); const balanceCell = row.insertCell(3); balanceCell.textContent = formatCurrency(tx.new_balance); balanceCell.style.color = tx.new_balance > 0 ? 'var(--secondary-color)' : (tx.new_balance < 0 ? 'var(--primary-color)' : 'var(--text-color)'); row.insertCell(4).textContent = tx.invoice_ref || '-'; }); } document.getElementById('addSupplierTxForm')?.reset(); } catch (error) { detailsDiv.style.display = 'none'; transactionTbody.innerHTML = '<tr><td colspan="5" style="color:red">Tedarikçi hesap detayları yüklenirken hata oluştu.</td></tr>'; }
+        }
+        async function makeSupplierPayment() {
+            const supplierId = document.getElementById('supplierSelect-s3').value; const amountInput = document.getElementById('supplierTransactionAmount-s3'); const descriptionInput = document.getElementById('supplierTransactionDesc-s3'); const invoiceRefInput = document.getElementById('supplierTransactionInvoiceRef-s3');
+            const amount = Math.abs(parseFloat(amountInput.value) || 0); const description = descriptionInput.value.trim(); const invoiceRef = invoiceRefInput.value.trim() || null;
+            if (!supplierId) { showGlobalError('Lütfen bir tedarikçi seçin.'); return; } if (isNaN(amount) || amount <= 0) { showGlobalError('Lütfen geçerli bir pozitif tutar girin.'); amountInput.focus(); return; } if (!description) { showGlobalError('Lütfen bir açıklama girin.'); descriptionInput.focus(); return; }
+            if (!confirm(`Tedarikçiye ${formatCurrency(amount)} ödeme yapıldığını onaylıyor musunuz?`)) return;
+            try { await fetchApi(`/suppliers/${supplierId}/transactions`, 'POST', { amount: -amount, description, invoiceRef }); showGlobalError('Tedarikçiye ödeme başarıyla kaydedildi.', true); updateSupplierAccountDetails(); amountInput.value = ''; descriptionInput.value = ''; invoiceRefInput.value = ''; } catch (error) { }
+        }
+        async function addSupplierDebt() {
+            const supplierId = document.getElementById('supplierSelect-s3').value; const amountInput = document.getElementById('supplierTransactionAmount-s3'); const descriptionInput = document.getElementById('supplierTransactionDesc-s3'); const invoiceRefInput = document.getElementById('supplierTransactionInvoiceRef-s3');
+            const amount = Math.abs(parseFloat(amountInput.value) || 0); const description = descriptionInput.value.trim(); const invoiceRef = invoiceRefInput.value.trim() || null;
+            if (!supplierId) { showGlobalError('Lütfen bir tedarikçi seçin.'); return; } if (isNaN(amount) || amount <= 0) { showGlobalError('Lütfen geçerli bir pozitif tutar girin.'); amountInput.focus(); return; } if (!description) { showGlobalError('Lütfen bir açıklama girin.'); descriptionInput.focus(); return; }
+             if (!confirm(`Tedarikçiye ${formatCurrency(amount)} borç ekleneceğini (örneğin, fatura alındı) onaylıyor musunuz?`)) return;
+            try { await fetchApi(`/suppliers/${supplierId}/transactions`, 'POST', { amount: amount, description, invoiceRef }); showGlobalError('Tedarikçi borcu (fatura/alım) başarıyla kaydedildi.', true); updateSupplierAccountDetails(); amountInput.value = ''; descriptionInput.value = ''; invoiceRefInput.value = ''; } catch (error) { }
+        }
+
+        // --- Reports (Kar/Zarar) ---
+        async function generateProfitLossReport() {
+            const resultsDiv = document.getElementById('report-results'); const summaryDiv = document.getElementById('profitLossSummary'); const startDateInput = document.getElementById('reportStartDate'); const endDateInput = document.getElementById('reportEndDate'); const dateRangeSpan = document.getElementById('reportDateRange'); if (!resultsDiv || !summaryDiv || !startDateInput || !endDateInput || !dateRangeSpan) return; resultsDiv.innerHTML = '<p>Rapor oluşturuluyor...</p>'; summaryDiv.style.display = 'none'; const startDate = startDateInput.value || null; const endDate = endDateInput.value || null; let dateRangeText = 'Tüm Zamanlar'; if (startDate && endDate) dateRangeText = `${startDate} - ${endDate}`; else if (startDate) dateRangeText = `${startDate} tarihinden sonrası`; else if (endDate) dateRangeText = `${endDate} tarihinden öncesi`; dateRangeSpan.textContent = dateRangeText;
+            try { const params = new URLSearchParams(); if (startDate) params.append('startDate', startDate); if (endDate) params.append('endDate', endDate); const reportData = await fetchApi(`/reports/profit-loss?${params.toString()}`); document.getElementById('reportTotalSales').textContent = formatCurrency(reportData.totalSales); document.getElementById('reportTotalCOGS').textContent = formatCurrency(reportData.totalCOGS); const profitSpan = document.getElementById('reportGrossProfit'); profitSpan.textContent = formatCurrency(reportData.grossProfit); profitSpan.classList.remove('profit', 'loss'); profitSpan.classList.add(reportData.grossProfit >= 0 ? 'profit' : 'loss'); resultsDiv.innerHTML = ''; summaryDiv.style.display = 'block'; } catch(error) { resultsDiv.innerHTML = `<p style="color:red;">Rapor oluşturulurken hata oluştu.</p>`; }
+        }
+
+        // --- Modal Functions ---
+        function showModal(title, contentHtml, modalClass = '') {
+             const modal = document.getElementById('viewModal'); const modalContentDiv = modal.querySelector('.modal-content'); const modalTitle = document.getElementById('modalTitle'); const modalBody = document.getElementById('modalBody'); if (!modal || !modalTitle || !modalBody || !modalContentDiv) return; modalContentDiv.className = 'modal-content'; if (modalClass) modalContentDiv.classList.add(modalClass); modalTitle.textContent = title; modalBody.innerHTML = contentHtml; modal.style.display = "block"; document.body.style.overflow = 'hidden';
+        }
+        function closeModal() { const modal = document.getElementById('viewModal'); if (modal) modal.style.display = "none"; document.body.style.overflow = ''; const modalBody = document.getElementById('modalBody'); if (modalBody) modalBody.innerHTML = ''; }
+        window.onclick = function(event) { const modal = document.getElementById('viewModal'); if (event.target == modal) closeModal(); }
+
+    </script>
+
+</body>
+</html>
